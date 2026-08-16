@@ -1,8 +1,9 @@
 ﻿import numpy as np
 import pandas as pd
-from scipy import fft, interpolate
+from scipy import fft, interpolate, stats
 import matplotlib.pyplot as plt
 import os
+import argparse
 
 # Physical constants
 HBAR = 1.054571817e-34  # J s
@@ -10,81 +11,88 @@ C = 2.99792458e8        # m/s
 K_B = 1.380649e-23      # J/K
 PI = np.pi
 
-def generate_casimir_data(d_array, T=300):
+# Default setup parameters
+R_SPHERE = 150e-6       # 150 um sphere radius
+
+def generate_casimir_data(d_array, geometry, material_model, T=300):
     '''
-    Generates the ideal Casimir force and applies thermal and roughness corrections.
+    Generates synthetic ideal Casimir force and applies thermal/roughness corrections.
     '''
     # 1. Ideal Casimir Force (Lifshitz T=0, perfect conductors)
-    F_ideal = - (PI**2 * HBAR * C) / (240 * d_array**4)
-    
-    # 2. Thermal correction (High-T limit for metals, approx. linear in T*d)
-    # Reference: Klimchitskaya & Mostepanenko (2009), Bordag et al. (2009)
+    if geometry == 'parallel':
+        # F ~ d^-4
+        F_ideal = - (PI**2 * HBAR * C) / (240 * d_array**4)
+    elif geometry == 'sphere-plate':
+        # Proximity Force Approximation (PFA): F = 2*pi*R*E_parallel
+        # E_parallel = - (pi^2 * hbar * c) / (720 * d^3)
+        F_ideal = - (PI**3 * HBAR * C * R_SPHERE) / (360 * d_array**3)
+    else:
+        raise ValueError("Invalid geometry")
+
+    # 2. Thermal correction & Material Model Switch
+    # Note: The debate between Plasma vs Drude models in the Casimir effect is highly active.
+    # The Drude model (gamma > 0) excludes the transverse electric (TE) zero-frequency mode,
+    # leading to a reduction in the force at large distances compared to the Plasma model.
+    # Here we use phenomenological thermal correction factors to simulate this effect.
     zeta_3 = 1.2020569
-    thermal_correction = (240 * zeta_3 * K_B * T * d_array) / (PI**3 * HBAR * C)
+    
+    if material_model == 'plasma':
+        # Plasma: wp = 9.0 eV, gamma = 0
+        # Standard high-temperature correction proxy for perfect/plasma conductors
+        thermal_correction = (240 * zeta_3 * K_B * T * d_array) / (PI**3 * HBAR * C)
+    elif material_model == 'drude':
+        # Drude: wp = 9.0 eV, gamma = 0.035 eV
+        # TE mode vanishes, thermal correction drops by approx a factor of 1/2 at large distances
+        thermal_correction = 0.5 * (240 * zeta_3 * K_B * T * d_array) / (PI**3 * HBAR * C)
+    else:
+        raise ValueError("Invalid material model")
+
     F_T = F_ideal * (1 + thermal_correction)
     
     # 3. Roughness correction (Debye model)
     delta = 0.5e-9  # 0.5 nm RMS roughness
     F_rough = F_T * (1 + 6 * (delta / d_array)**2)
     
-    return F_ideal, F_rough
+    return F_ideal, F_T, F_rough
 
-def apply_noise_and_signal(d_array, F_rough):
+def apply_noise_and_signal(d_array, F_rough, lambda_inj=500e-9):
     '''
     Adds Gaussian noise and an injected periodic signal.
     '''
-    # 4. Instrumental noise (1% of signal)
     sigma_noise = 0.01 * np.abs(F_rough)
     noise = np.random.normal(0, sigma_noise)
     
-    # 5. Injected periodic signal
-    lambda_inj = 500e-9  # 500 nm
     A_inj = 0.005 * np.abs(F_rough)
     F_injected = A_inj * np.sin(2 * PI * d_array / lambda_inj)
-    
-    # Final measured data
     F_measured = F_rough + noise + F_injected
     
-    return F_measured, noise, F_injected
+    return F_measured, noise, F_injected, A_inj
 
 def compute_residuals(F_measured, F_rough):
-    '''
-    Computes the residuals by subtracting the standard theoretical model.
-    '''
     return F_measured - F_rough
 
 def fft_analysis(d_array, residuals):
-    '''
-    Interpolates the log-spaced data to a linear grid and applies FFT.
-    '''
-    # Create a uniform linear grid for FFT
     n_points = len(d_array)
     d_lin = np.linspace(d_array.min(), d_array.max(), n_points)
     
-    # Interpolate residuals
     interp_func = interpolate.interp1d(d_array, residuals, kind='cubic')
     R_lin = interp_func(d_lin)
     
-    # Apply FFT with Hann window to reduce leakage
     window = np.hanning(n_points)
     R_windowed = R_lin * window
     
-    # FFT spacing
     spacing = d_lin[1] - d_lin[0]
     frequencies = fft.fftfreq(n_points, d=spacing)
     spectrum = fft.fft(R_windowed)
     
-    # Power Spectral Density
     psd = np.abs(spectrum)**2
     
-    # Only keep positive frequencies
     pos_mask = frequencies > 0
     freq_pos = frequencies[pos_mask]
     psd_pos = psd[pos_mask]
     
-    # Identify peaks (> 3 sigma of the background noise floor)
     noise_floor = np.median(psd_pos)
-    sigma_floor = np.std(psd_pos[psd_pos < 3*noise_floor]) # approx noise std
+    sigma_floor = np.std(psd_pos[psd_pos < 3*noise_floor])
     threshold = noise_floor + 3 * sigma_floor
     
     peaks_mask = psd_pos > threshold
@@ -92,82 +100,119 @@ def fft_analysis(d_array, residuals):
     peak_psd = psd_pos[peaks_mask]
     sigmas = (peak_psd - noise_floor) / sigma_floor
     
-    return freq_pos, psd_pos, threshold, peak_freqs, peak_psd, sigmas
+    # Statistical validations
+    df = 1.0 / (d_array.max() - d_array.min())
+    N_bins = len(freq_pos)
+    
+    # Bonferroni corrected P-value (assuming exponential distribution for PSD noise)
+    # p_local = exp(- (peak - floor)/floor ) approx
+    p_local = np.exp(-sigmas)
+    p_bonferroni = np.minimum(p_local * N_bins, 1.0)
+    
+    # Minimum Detection Limit (MDL) for SNR = 3
+    # Approximating from the PSD threshold back to amplitude in spatial domain
+    # PSD amplitude relates to signal amplitude A by PSD ~ (A * N / 4)^2 for Hanning
+    MDL_amp_est = np.sqrt(threshold) * 4 / np.sum(window)
+    
+    stats_dict = {
+        'df': df,
+        'N_bins': N_bins,
+        'MDL_amp': MDL_amp_est
+    }
+    
+    return freq_pos, psd_pos, threshold, peak_freqs, peak_psd, sigmas, p_bonferroni, stats_dict
 
-def save_outputs(d_array, F_ideal, F_rough, F_measured, residuals, noise, freq_pos, psd_pos, threshold, peak_freqs, peak_psd, sigmas):
+def run_pipeline(args):
+    print(f"Starting Casimir FFT Pipeline [Geometry: {args.geometry}, Model: {args.material_model}]")
     os.makedirs('output', exist_ok=True)
     
-    # CSVs
-    df_data = pd.DataFrame({
-        'd(m)': d_array,
-        'F_ideal(N)': F_ideal,
-        'F_rough(N)': F_rough,
-        'F_measured(N)': F_measured,
-        'residuals(N)': residuals,
-        'noise(N)': noise
-    })
-    df_data.to_csv('output/data_casimir_synthetic.csv', index=False)
+    if args.empirical_data:
+        print(f"Processing empirical data from {args.empirical_data}...")
+        # Placeholder for empirical data loading
+        # df_emp = pd.read_csv(args.empirical_data)
+        # d_array = df_emp['d'].values
+        # F_measured = df_emp['F'].values
+        # This will be fully implemented when user provides the CSV.
+        print("Empirical data ingestion not fully mapped until CSV structure is provided. Defaulting to synthetic.")
     
-    df_peaks = pd.DataFrame({
-        'peak_frequency(1/m)': peak_freqs,
-        'peak_power': peak_psd,
-        'significance_sigma': sigmas
-    })
-    # Filter out very low frequencies (DC leakage)
-    df_peaks = df_peaks[df_peaks['peak_frequency(1/m)'] > 1e5]
-    df_peaks.to_csv('output/data_fft_peaks.csv', index=False)
+    # Physical Range: 100 nm to 2 um
+    # Justification: Above 2 um, the Casimir force (sub-aN to fN) is overwhelmed by 
+    # cantilever thermal noise and seismic vibrations in standard AFM.
+    d_min = 100e-9
+    d_max = 2e-6
+    N_points = 2000
+    d_array = np.logspace(np.log10(d_min), np.log10(d_max), N_points)
     
-    # Plots
+    F_ideal, F_T, F_rough = generate_casimir_data(d_array, args.geometry, args.material_model, T=300)
+    
+    # Baseline injection
+    lambda_inj = 500e-9
+    F_measured, noise, F_injected, A_inj = apply_noise_and_signal(d_array, F_rough, lambda_inj)
+    residuals = compute_residuals(F_measured, F_rough)
+    
+    freq_pos, psd_pos, threshold, peak_freqs, peak_psd, sigmas, p_bonf, s_dict = fft_analysis(d_array, residuals)
+    
+    # Sub-bin shift robustness test
+    # Shift frequency by 0.5 bins
+    f_inj = 1.0 / lambda_inj
+    f_inj_shifted = f_inj + 0.5 * s_dict['df']
+    lambda_inj_shifted = 1.0 / f_inj_shifted
+    
+    F_meas_shift, _, _, _ = apply_noise_and_signal(d_array, F_rough, lambda_inj_shifted)
+    res_shift = compute_residuals(F_meas_shift, F_rough)
+    _, psd_shift, _, p_freq_shift, p_psd_shift, sig_shift, p_bonf_shift, _ = fft_analysis(d_array, res_shift)
+    
+    print("\n--- Statistical Validation ---")
+    print(f"Freq Resolution (df): {s_dict['df']:.2f} m^-1")
+    print(f"Independent Bins (N_bins): {s_dict['N_bins']}")
+    print(f"MDL (SNR=3): ~ {s_dict['MDL_amp']:.2e} N")
+    
+    print("\n--- Baseline Injection (lambda = 500 nm) ---")
+    for f, p, sig, pb in zip(peak_freqs, peak_psd, sigmas, p_bonf):
+        if f > 1e5: # Ignore DC leakage
+            print(f"Peak @ {f:.2e} m^-1 | PSD: {p:.2e} | Sigma: {sig:.2f} | Bonf P-val: {pb:.2e}")
+            
+    print("\n--- Sub-bin Shift Injection (+0.5 df) ---")
+    for f, p, sig, pb in zip(p_freq_shift, p_psd_shift, sig_shift, p_bonf_shift):
+        if f > 1e5:
+            print(f"Peak @ {f:.2e} m^-1 | PSD: {p:.2e} | Sigma: {sig:.2f} | Bonf P-val: {pb:.2e}")
+            
+    # Save outputs
+    pd.DataFrame({
+        'd(m)': d_array, 'F_ideal(N)': F_ideal, 'F_rough(N)': F_rough, 
+        'F_measured(N)': F_measured, 'residuals(N)': residuals
+    }).to_csv('output/data_casimir_synthetic.csv', index=False)
+    
+    # Plotting
     plt.figure(figsize=(8, 6))
     plt.loglog(d_array, np.abs(F_ideal), label=r'|F_{ideal}|')
     plt.loglog(d_array, np.abs(F_rough), label=r'|F_{rough}|')
     plt.loglog(d_array, np.abs(F_measured), label=r'|F_{measured}|', alpha=0.5)
     plt.xlabel(r'Separation Distance $d$ (m)')
     plt.ylabel(r'Casimir Force $|F|$ (N)')
-    plt.title('Synthetic Casimir Force')
+    plt.title(f'Synthetic Force ({args.geometry}, {args.material_model})')
     plt.legend()
     plt.grid(True, which="both", ls="--")
     plt.savefig('output/fig_casimir_force.png')
     plt.close()
     
     plt.figure(figsize=(8, 6))
-    plt.plot(d_array, residuals, label='Residuals $R(d)$')
-    plt.axhline(0, color='r', linestyle='--')
-    plt.xlabel(r'Separation Distance $d$ (m)')
-    plt.ylabel(r'Force Residuals (N)')
-    plt.title('Force Residuals with Injected Signal')
-    plt.legend()
-    plt.grid(True)
-    plt.savefig('output/fig_residuals.png')
-    plt.close()
-    
-    plt.figure(figsize=(8, 6))
-    plt.semilogy(freq_pos, psd_pos, label='PSD')
+    plt.semilogy(freq_pos, psd_pos, label='PSD (Baseline)')
+    plt.semilogy(freq_pos, psd_shift, label='PSD (Shifted +0.5 bin)', alpha=0.5)
     plt.axhline(threshold, color='r', linestyle='--', label=r'3$\sigma$ Threshold')
-    for f in df_peaks['peak_frequency(1/m)']:
-        plt.axvline(f, color='g', linestyle=':', alpha=0.5)
     plt.xlabel(r'Spatial Frequency $(m^{-1})$')
     plt.ylabel(r'Power Spectral Density')
-    plt.title('Spectral Analysis of Residuals')
-    plt.xlim(0, 5e6) # Focus on relevant range up to 5 um^-1
+    plt.xlim(0, 5e6)
     plt.legend()
     plt.grid(True)
     plt.savefig('output/fig_fft_spectrum.png')
     plt.close()
 
 if __name__ == '__main__':
-    print('Starting Casimir FFT Pipeline...')
+    parser = argparse.ArgumentParser(description="Casimir FFT Pipeline")
+    parser.add_argument('--geometry', type=str, choices=['parallel', 'sphere-plate'], default='sphere-plate')
+    parser.add_argument('--material-model', type=str, choices=['plasma', 'drude'], default='plasma')
+    parser.add_argument('--empirical_data', type=str, help="Path to empirical CSV data")
+    args = parser.parse_args()
     
-    d_min = 100e-9 # 100 nm
-    d_max = 10e-6  # 10 um
-    N_points = 2000
-    d_array = np.logspace(np.log10(d_min), np.log10(d_max), N_points)
-    
-    F_ideal, F_rough = generate_casimir_data(d_array, T=300)
-    F_measured, noise, F_injected = apply_noise_and_signal(d_array, F_rough)
-    residuals = compute_residuals(F_measured, F_rough)
-    freq_pos, psd_pos, threshold, peak_freqs, peak_psd, sigmas = fft_analysis(d_array, residuals)
-    
-    save_outputs(d_array, F_ideal, F_rough, F_measured, residuals, noise, freq_pos, psd_pos, threshold, peak_freqs, peak_psd, sigmas)
-    
-    print('Pipeline executed successfully. Outputs saved in output/ directory.')
+    run_pipeline(args)
