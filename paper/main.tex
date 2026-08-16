@@ -10,8 +10,8 @@
 \title{Spectral analysis of systematic residuals in Casimir force measurements via atomic force microscopy}
 
 \author{Bruno Lu\c{c}ardo Olivaes}
-\email{bruno@example.com} % Update with your actual email
-\affiliation{Independent Researcher} % Update with appropriate affiliation
+\email{bruno@example.com} 
+\affiliation{Independent Researcher} 
 
 \date{\today}
 
@@ -22,28 +22,73 @@ Precision measurements of the Casimir force between macroscopic bodies have hist
 \maketitle
 
 \section{Introduction}
-% Introduction goes here...
+The Casimir force, a macroscopic manifestation of quantum vacuum fluctuations, has profound implications for fundamental physics and precision metrology \cite{bordag2009, parsegian2005}. Since its theoretical prediction, experimental verifications have achieved remarkable precision. However, discrepancies between theory and experiment, particularly at short separation distances, have persistently plagued the field. Pioneering experiments \cite{lamoreaux1997, bressi2002, decca2003} revealed anomalies that are conventionally attributed to surface roughness, patch potentials, or finite-temperature corrections. 
 
-\section{Methodology}
-\subsection{Atomic Force Microscopy Data Acquisition}
-% Details on data from Lamoreaux, Decca, etc.
+Despite rigorous efforts to model these classical effects \cite{klimchitskaya2009}, residual deviations often remain. This raises a critical question: do these residuals stem from uncharacterized systematic errors, or do they harbor signatures of unmodeled interactions? To address this, we propose a systematic spectral analysis protocol for AFM force-distance curves. By isolating the residuals and applying Fast Fourier Transform (FFT) techniques, we aim to quantify periodic structures that are not explained by standard models.
 
-\subsection{FFT Protocol for Force-Distance Curves}
-% Explanation of the spectral analysis method.
+\section{Theoretical Framework}
+The ideal Casimir force between two perfectly conducting parallel plates at zero temperature is given by the Lifshitz formula in its simplest limit:
+\begin{equation}
+F_{\mathrm{ideal}}(d) = - \frac{\pi^2 \hbar c}{240 d^4},
+\label{eq:ideal}
+\end{equation}
+where $d$ is the separation distance. For real metals at room temperature, such as gold (Au), finite-temperature corrections must be applied. Using the high-temperature Drude/plasma model limit \cite{klimchitskaya2009, bordag2009}, the thermal correction modifies the force:
+\begin{equation}
+F_{T}(d) = F_{\mathrm{ideal}}(d) \left[ 1 + \Delta_{T}(d) \right].
+\label{eq:thermal}
+\end{equation}
+Furthermore, macroscopic bodies exhibit surface roughness. In the long-distance limit ($d \gg \delta$), the multiplicative Debye roughness correction for an RMS height $\delta$ is:
+\begin{equation}
+F_{\mathrm{rough}}(d) = F_{T}(d) \left[ 1 + 6 \left(\frac{\delta}{d}\right)^2 \right].
+\label{eq:roughness}
+\end{equation}
+The experimental residuals $R(d)$ are defined by subtracting this comprehensive theoretical model from the measured force $F_{\mathrm{meas}}(d)$:
+\begin{equation}
+R(d) = F_{\mathrm{meas}}(d) - F_{\mathrm{rough}}(d).
+\label{eq:residuals}
+\end{equation}
 
-\section{Results}
-% To be populated with FFT analysis results.
+\section{Spectral Analysis Protocol}
+To investigate the structure of $R(d)$, we apply spectral analysis. Since AFM data is often acquired with logarithmic or non-uniform spatial spacing, $R(d)$ is first interpolated onto a uniform linear grid. A Fast Fourier Transform (FFT) is then computed to yield the Power Spectral Density (PSD).
 
-\section{Discussion}
-% Comparison with standard roughness/temperature models.
+To mitigate spectral leakage from finite data boundaries, a Hann window is applied prior to the FFT. The detection criterion for anomalous periodic components is set at a signal-to-noise ratio (S/N) greater than 3. Specifically, a peak is considered statistically significant if its PSD exceeds the local background noise floor by $3\sigma$, excluding the DC component and low-frequency leakage.
 
-\section{Conclusion}
-% Concluding remarks.
+\section{Synthetic Validation}
+We validated the protocol using a synthetic dataset simulating an AFM measurement between Au plates from 100 nm to 10 $\mu$m. The model included a thermal correction at $T = 300$ K, surface roughness with $\delta = 0.5$ nm, and an injected Gaussian instrumental noise of 1\%. To test the FFT detection capability, an artificial periodic signal with amplitude $0.5\%$ of the local force and a spatial wavelength of $\lambda_{\mathrm{inj}} = 500$ nm was injected.
+
+The generated force curves are shown in Fig.~\ref{fig:casimir}, and the isolated residuals $R(d)$ are depicted in Fig.~\ref{fig:residuals}. The resulting PSD spectrum (Fig.~\ref{fig:fft}) successfully recovered the injected peak at the corresponding spatial frequency $f_{\mathrm{inj}} = 1/\lambda_{\mathrm{inj}} = 2 \times 10^6$ m$^{-1}$, with a significance exceeding the $3\sigma$ threshold. The frequency resolution was sufficient to isolate the peak from the broad noise background.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\linewidth]{../output/fig_casimir_force.png}
+\caption{Synthetic Casimir force components as a function of separation distance.}
+\label{fig:casimir}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\linewidth]{../output/fig_residuals.png}
+\caption{Force residuals $R(d)$ containing 1\% noise and the 0.5\% injected periodic signal.}
+\label{fig:residuals}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\linewidth]{../output/fig_fft_spectrum.png}
+\caption{Power Spectral Density of the residuals. The dashed line indicates the $3\sigma$ threshold, and the detected peak matches the injected $\lambda_{\mathrm{inj}} = 500$ nm.}
+\label{fig:fft}
+\end{figure}
+
+\section{Discussion and Outlook}
+The synthetic validation demonstrates the robustness of the FFT protocol in detecting sub-percent periodic anomalies in Casimir force residuals. However, this study is currently limited by the use of synthetic data. Real AFM measurements contain complex, non-stationary noise profiles, thermal drift, and calibration uncertainties that could obscure spectral peaks or introduce artifactual harmonics.
+
+The immediate next step is the application of this pipeline to raw historical AFM datasets (e.g., from Lamoreaux or Decca) and modern measurements from collaborating Brazilian laboratories. By systematically analyzing experimental residuals, we can rigorously constrain non-standard short-range interactions and improve the calibration fidelity of AFM Casimir experiments.
 
 \begin{acknowledgments}
-We acknowledge the use of historical datasets provided by...
+We acknowledge the use of historical datasets for future experimental validations.
 \end{acknowledgments}
 
+\bibliographystyle{apsrev4-2}
 \bibliography{references}
 
 \end{document}
