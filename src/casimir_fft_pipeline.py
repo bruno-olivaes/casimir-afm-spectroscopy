@@ -54,7 +54,7 @@ def fft_analysis(d_array, residuals):
     
     noise_floor = np.median(psd_pos)
     sigma_floor = np.std(psd_pos[psd_pos < 3*noise_floor])
-    threshold = noise_floor + 3 * sigma_floor
+    threshold = noise_floor + 4 * sigma_floor
     
     peaks_mask = psd_pos > threshold
     peak_freqs = freq_pos[peaks_mask]
