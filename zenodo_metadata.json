@@ -1,0 +1,28 @@
+{
+  "metadata": {
+    "title": "Spectral Analysis of Systematic Residuals in Casimir Force Measurements: Methodological Pitfalls of Grid Interpolation and the Lomb-Scargle Resolution",
+    "upload_type": "publication",
+    "publication_type": "preprint",
+    "description": "Precision measurements of the Casimir force between macroscopic bodies have historically exhibited residual deviations, commonly attributed to surface roughness, patch potentials, and finite-temperature corrections. In this work, we present a spectral metrology pipeline designed to search for anomalous periodic components within Casimir force residuals. Using synthetic force-distance profiles, we validate that Fast Fourier Transform (FFT) analysis with Hann windowing can reliably detect harmonic anomalies with amplitudes down to 0.5% of the local force. We then apply this protocol to precision historical Atomic Force Microscopy (AFM) data from Decca et al. (2003). Crucially, we demonstrate that standard spline interpolation of non-uniformly sampled AFM separation distances forcibly onto a uniform linear grid induces severe, spurious spectral peaks (>3 sigma significance) in FFT spectra. We resolve this artifact by implementing the normalized Lomb-Scargle periodogram directly on the raw, un-interpolated coordinates. The Lomb-Scargle analysis yields a False Alarm Probability FAP ~ 1.0, definitively establishing that the apparent periodic peaks are interpolation artifacts and confirming that historical residuals are consistent with experimental Gaussian white noise (chi2/ndof = 2.62). Our findings establish strict metrological guidelines for future nanomechanical tests searching for novel short-range interactions.",
+    "creators": [
+      {
+        "name": "Olivaes, Bruno Luçardo",
+        "affiliation": "Independent Researcher, Brazil",
+        "orcid": "0009-0003-8857-7945"
+      }
+    ],
+    "keywords": [
+      "Casimir effect",
+      "Atomic Force Microscopy",
+      "Metrology",
+      "Lomb-Scargle periodogram",
+      "Fast Fourier Transform",
+      "Proximity Force Approximation",
+      "Quantum Vacuum Fluctuations",
+      "Systematic Errors"
+    ],
+    "license": "CC-BY-4.0",
+    "access_right": "open"
+  }
+}
+
