@@ -1,9 +1,10 @@
 {
   "metadata": {
-    "title": "Spectral Analysis of Systematic Residuals in Casimir Force Measurements: Methodological Pitfalls of Grid Interpolation and the Lomb-Scargle Resolution",
+    "title": "Spectral Analysis of Systematic Residuals in Casimir Force Measurements: Lossless Vector Re-Audit, Statistical Pitfalls, and KPFM Patch-Potential Metrology (v2.0)",
+    "version": "2.0.0",
     "upload_type": "publication",
     "publication_type": "preprint",
-    "description": "Precision measurements of the Casimir force between macroscopic bodies have historically exhibited residual deviations, commonly attributed to surface roughness, patch potentials, and finite-temperature corrections. In this work, we present a spectral metrology pipeline designed to search for anomalous periodic components within Casimir force residuals. Using synthetic force-distance profiles, we validate that Fast Fourier Transform (FFT) analysis with Hann windowing can reliably detect harmonic anomalies with amplitudes down to 0.5% of the local force. We then apply this protocol to precision historical Atomic Force Microscopy (AFM) data from Decca et al. (2003). Crucially, we demonstrate that standard spline interpolation of non-uniformly sampled AFM separation distances forcibly onto a uniform linear grid induces severe, spurious spectral peaks (>3 sigma significance) in FFT spectra. We resolve this artifact by implementing the normalized Lomb-Scargle periodogram directly on the raw, un-interpolated coordinates. The Lomb-Scargle analysis yields a False Alarm Probability FAP ~ 1.0, definitively establishing that the apparent periodic peaks are interpolation artifacts and confirming that historical residuals are consistent with experimental Gaussian white noise (chi2/ndof = 2.62). Our findings establish strict metrological guidelines for future nanomechanical tests searching for novel short-range interactions.",
+    "description": "Revised Version 2.0. We establish a rigorous spectral metrology protocol for auditing Casimir force and pressure residuals and apply it to: (1) lossless vector-extracted measurements from the Au-Cu micro-electro-mechanical torsional oscillator (MTO, R = 294.3 um) experiment of Decca et al. (Phys. Rev. Lett. 91, 050402, 2003; N = 497 dynamic pressure residuals dPc and N = 288 static force residuals dFc), and (2) raw Kelvin Probe Force Microscopy (KPFM) and superconducting Casimir data from de Jong et al. (Nature Physics, 2025). We identify and resolve three metrological pitfalls: (i) applying an outlier-clipped Gaussian 3-sigma threshold to exponentially distributed (chi2_2/2) FFT periodograms flags 36 false peaks on white noise, while feeding Zechmeister-Kurster power into Scargle's unscaled exponential formula causes numerical underflow (FAP = 1.00); (ii) cubic polynomial detrending across short-range inverse-power tails (z < 400 nm) induces Runge oscillatory ringing (lambda = 583.5 nm, chi2/dof = 3.74, Baluev FAP = 1.5e-45), resolved via a physical {1, z^-4, z^-5} basis (chi2/dof = 1.14, P_max = 0.0332, Baluev FAP = 0.163) or linear-response window z >= 500 nm (chi2/dof = 1.20, Baluev FAP = 0.651); and (iii) uniform-grid spline resampling degrades short-wavelength 90% Minimum Detectable Levels by 1.9x-2.3x compared to the heteroscedastic Generalized Lomb-Scargle periodogram. Finally, Speake-Trenner Laplace integration of the 2D KPFM patch spectrum (V_rms = 42.42 mV, roughness = 2.22 nm) demonstrates from first principles that surface patch potentials produce a smooth monotonic drift (P_patch ~ d^-2.29) rather than periodic oscillations.",
     "creators": [
       {
         "name": "Olivaes, Bruno Luçardo",
@@ -13,16 +14,15 @@
     ],
     "keywords": [
       "Casimir effect",
-      "Atomic Force Microscopy",
-      "Metrology",
-      "Lomb-Scargle periodogram",
-      "Fast Fourier Transform",
-      "Proximity Force Approximation",
-      "Quantum Vacuum Fluctuations",
-      "Systematic Errors"
+      "Micro-electro-mechanical torsional oscillator",
+      "Kelvin Probe Force Microscopy",
+      "Generalized Lomb-Scargle periodogram",
+      "Baluev False Alarm Probability",
+      "Patch potentials",
+      "Lifshitz theory",
+      "Precision metrology"
     ],
     "license": "CC-BY-4.0",
     "access_right": "open"
   }
 }
-

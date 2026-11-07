@@ -1,3 +1,17 @@
 ﻿data/zenodo_raw/
 data/*.zip
+data/decca_2003*.png
+data/decca_2003*.jpeg
+data/decca_2003.pdf
 __pycache__/
+.pytest_cache/
+*.pyc
+paper/*.aux
+paper/*.log
+paper/*.out
+parse_data.py
+patch.py
+src/cosmology_oscillatory_dark_energy.py
+output/fig_euclid_hubble_forecast.png
+output/experimental_*.png
+output/experimental_results.csv

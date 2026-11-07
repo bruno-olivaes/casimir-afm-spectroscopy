@@ -1,102 +1,50 @@
-# Casimir AFM Spectral Metrology Pipeline
+# Casimir Force & Nanomechanical Spectral Metrology Pipeline (v2.0)
 
 [![License: CC BY 4.0](https://img.shields.io/badge/License-CC_BY_4.0-lightgrey.svg)](https://creativecommons.org/licenses/by/4.0/)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
-[![Status: Peer-Reviewed Reproduction](https://img.shields.io/badge/Status-Reproducible-success.svg)]()
+[![Version 2.0](https://img.shields.io/badge/Release-v2.0_Peer--Review_Audited-brightgreen.svg)]()
 
-A precision metrology and spectral analysis pipeline for auditing systematic residuals and periodic anomaly searches in Atomic Force Microscopy (AFM) and optomechanical Casimir force experiments.
-
----
-
-## Overview
-
-Precision Casimir force experiments between metallic surfaces frequently show small residual deviations from ideal theory. When evaluating whether these residuals contain novel physical signatures (e.g., discrete vacuum modes or non-standard short-range forces), researchers often employ spectral techniques (such as the Fast Fourier Transform).
-
-This repository provides an open-source, end-to-end audit demonstrating a critical experimental trap:
-1. **The Interpolation Pitfall:** Resampling non-uniformly acquired AFM separation distances onto a uniform linear grid via cubic or linear splines induces severe spurious spectral peaks ($>3\sigma$ and $>4\sigma$) in standard FFT spectra.
-2. **The Lomb-Scargle Resolution:** Evaluating spectral power directly on the un-interpolated coordinates using the normalized **Lomb-Scargle Periodogram** resolves these artifacts. Applied to precision historical data from Decca et al. (*Phys. Rev. Lett.* 91, 050402, 2003), the False Alarm Probability is $\mathrm{FAP} \approx 1.00$, confirming that residuals are pure Gaussian experimental white noise ($\chi^2/\mathrm{ndof} = 2.62$).
+A precision metrology and spectral analysis pipeline for auditing systematic residuals, periodic anomaly searches, and electrostatic patch-potential backgrounds in micro-electro-mechanical torsional oscillator (MTO), optomechanical, and Atomic Force Microscopy (AFM/KPFM) Casimir experiments.
 
 ---
 
-## Repository Structure
+## What Changed in Version 2.0 (Post-Publication Audit)
 
-```
-├── data/
-│   ├── decca_2003_fig3.csv            # Calibrated literature data (Decca et al. 2003)
-│   └── Casimir_pressure_dist_v4.csv   # Optomechanical drum dataset
-├── src/
-│   ├── casimir_fft_pipeline.py        # Core pipeline: Synthetic, Experimental, and Lomb-Scargle
-│   ├── systematic_error.py            # Systematic parameter envelope variation (R, T)
-│   ├── sensitivity_table.py           # Minimum Detection Level (MDL) vs. noise floor
-│   └── bootstrap_analysis.py          # Chi-square bootstrap resampling
-├── output/
-│   ├── fig_spectral_comparison.png    # Method A (FFT) vs. Method B (Lomb-Scargle)
-│   ├── experimental_fit.png           # Calibrated PFA fit (R_eff = 117.3 um, Chi2/ndof = 2.62)
-│   └── fig_MDL_vs_noise.png           # Minimum detection sensitivity heatmap
-├── paper/
-│   ├── main.tex                       # Complete two-column LaTeX manuscript
-│   ├── main.pdf                       # Compiled publication-ready PDF (705 KB)
-│   └── references.bib                 # BibTeX entries
-└── zenodo_metadata.json               # Official Zenodo publication metadata
-```
+1. **Lossless Vector Extraction of Decca et al. (2003):** Replaced the 53 raster-digitized points of v1 (which suffered from $\sim 7.1\text{ mPa}$ pixel quantization steps) with **direct PyMuPDF vector coordinate extraction** from the published PDF (`src/decca_vector_extract.py`), recovering all **$N = 497$ dynamic pressure residuals $\Delta P_c(z)$** (Fig. 4b, $\sigma_P = 0.313\text{ mPa}$) and **$N = 288$ static force residuals $\Delta F_c(z)$** (Fig. 3b, $\sigma_F = 0.229\text{ pN}$) with $<0.004\text{ mPa}$ axis-mapping accuracy.
+2. **Exact Apparatus & Geometry Attribution:** Properly documents Decca et al. (*Phys. Rev. Lett.* 91, 050402, 2003) as an **Au-coated sphere ($R = 294.3 \pm 0.1\,\mu\mathrm{m}$) vs. Cu-coated MEMS torsional oscillator (MTO)** experiment, removing the v1 $R = 196\,\mu\mathrm{m}$ AFM misattribution.
+3. **Resolution of the Zechmeister–Kürster / Scargle Underflow Bug:** Replaces `scipy.signal.lombscargle(..., normalize=True)` + unscaled Scargle exponential formula (which underflowed to $\mathrm{FAP} \equiv 1.00$ even on noiseless sine waves) with the heteroscedastic **Generalized Lomb-Scargle (GLS)** estimator (`astropy.timeseries.LombScargle`) and exact analytical **Baluev (2008)** extreme-value False Alarm Probabilities.
+4. **Physical Inverse-Power Detrending vs. Polynomial Runge Ringing:** Demonstrates that subtracting a degree-3 polynomial across the steep short-range ($z < 400\text{ nm}$) drift in $\Delta P_c(z)$ induces spurious Runge oscillations ($\lambda = 583.5\text{ nm}$, $\chi^2/\mathrm{dof} = 3.74$, $\mathrm{FAP} = 1.49\times 10^{-45}$). Modeling the short-range background with the physical basis $\Delta P_{\mathrm{sys}}(z) = c_0 + c_4 (z_0/z)^4 + c_5 (z_0/z)^5$ reduces $\chi^2/\mathrm{dof}$ across all 497 points to **$1.14$** with $P_{\mathrm{ZK},\max} = 0.0332$ and **Baluev $\mathrm{FAP} = 0.163$** (and $\chi^2/\mathrm{dof} = 1.20$, **Baluev $\mathrm{FAP} = 0.651$** for $z \ge 500\text{ nm}$).
+5. **2025 KPFM Patch-Potential & Superconducting Audit:** Integrates the 2D Hann-windowed electrostatic patch-potential spectrum $S_{VV}(\mathbf{k})$ from the raw Olympus Jupiter KPFM dataset (`W1P3_E4_measarea3 0003.h5`, $V_{\mathrm{rms}} = 42.42\text{ mV}$, $\delta_{\mathrm{rms}} = 2.22\text{ nm}$) of **de Jong et al. (*Nature Physics*, 2025)** through the exact Speake–Trenner Laplace transfer kernel, showing that surface patches generate a smooth monotonic background ($P_{\mathrm{patch}} \propto d^{-2.29}$) rather than periodic oscillations.
+
+---
+
+## Key Audited Results (v2.0)
+
+| Dataset & Regime | $N$ | $\chi^2/\mathrm{dof}$ | Max GLS Power $P_{\mathrm{ZK},\max}$ | Baluev $\mathrm{FAP}$ | Metrological Conclusion |
+| :--- | :---: | :---: | :---: | :---: | :--- |
+| **Decca Fig. 4b $\Delta P_c$ (Raw, $z \ge 193\text{ nm}$)** | 497 | $41.29$ | $0.3010$ | $1.01\times 10^{-35}$ | Dominated by $<400\text{ nm}$ nonlinear MTO / $\varepsilon(\omega)$ drift |
+| **Decca Fig. 4b $\Delta P_c$ (Cubic Poly, $z \ge 193\text{ nm}$)** | 497 | $3.74$ | $0.3626$ | $1.49\times 10^{-45}$ | **Trap:** Polynomial Runge ringing on $z^{-4}$ corner |
+| **Decca Fig. 4b $\Delta P_c$ (Physical $\{1, z^{-4}, z^{-5}\}$)** | **497** | **$1.14$** | **$0.0332$** | **$0.163$** | **Null confirmed:** Consistent with white noise ($\sigma_P = 0.313\text{ mPa}$) |
+| **Decca Fig. 4b $\Delta P_c$ (Linear Window $z \ge 500\text{ nm}$)** | **343** | **$1.20$** | **$0.0348$** | **$0.651$** | **Null confirmed** in asymptotic linear-response regime |
+| **Decca Fig. 3b $\Delta F_c$ (Linear Window $z \ge 400\text{ nm}$)** | **222** | **$0.85$** | **$0.0588$** | **$0.332$** | **Null confirmed** in static force mode ($\sigma_F = 0.229\text{ pN}$) |
 
 ---
 
 ## Quickstart & Reproducibility
 
-### 1. Requirements
-Install the minimal dependencies:
 ```bash
-pip install -r requirements.txt
-```
+# 1. Extract lossless vector coordinates from Decca et al. (2003) PDF
+python src/decca_vector_extract.py
 
-### 2. Run the Benchmark Tests
-* **Run Empirical Periodic Search (Method A vs. Method B):**
-  ```bash
-  python src/casimir_fft_pipeline.py --mode periodic_search --empirical_data data/decca_2003_fig3.csv
-  ```
-  *Output:* Generates `output/fig_spectral_comparison.png` demonstrating the elimination of spurious peaks via Lomb-Scargle.
+# 2. Run the complete v2.0 Decca + Injection-Recovery MDL + de Jong (2025) KPFM audit
+python src/casimir_fft_pipeline.py --mode full_v2
 
-* **Run PFA Model Fit:**
-  ```bash
-  python src/casimir_fft_pipeline.py --mode experimental --empirical_data data/decca_2003_fig3.csv
-  ```
-  *Output:* Calibrated sphere radius $R = 117.3\,\mu\mathrm{m}$, $\chi^2/\mathrm{ndof} = 2.62$.
-
-* **Run Synthetic Scalloping Loss Validation:**
-  ```bash
-  python src/casimir_fft_pipeline.py --mode synthetic --radius 150e-6
-  ```
-
----
-
-## Key Results
-
-| Metric | Method A (Interpolated FFT) | Method B (Lomb-Scargle) | Physical Interpretation |
-| :--- | :---: | :---: | :--- |
-| **Peaks $>3\sigma$** | **7 spurious peaks** | **0 peaks** | FFT peaks are spline grid artifacts |
-| **Max Normalized Power** | $7.22 \times 10^{-9}$ (PSD) | $0.1526$ | Power falls well below detection threshold |
-| **False Alarm Probability (FAP)** | - | **$1.00$** | Residuals consistent with Gaussian white noise |
-| **Model $\chi^2/\mathrm{ndof}$** | - | **$2.62$** | Physically realistic fit with $4.0\text{ mPa}$ noise floor |
-
----
-
-## How to Cite
-
-If you use this pipeline or methodology in your research, please cite:
-
-```bibtex
-@article{olivaes2026casimir,
-  author    = {Olivaes, Bruno Lu\c{c}ardo},
-  title     = {Spectral Analysis of Systematic Residuals in Casimir Force Measurements: Methodological Pitfalls of Grid Interpolation and the Lomb-Scargle Resolution},
-  year      = {2026},
-  journal   = {Preprint},
-  doi       = {10.5281/zenodo.xxxxxx}
-}
+# 3. Run unit tests
+pytest tests
 ```
 
 ---
 
 ## License
 
-This project is licensed under the [Creative Commons Attribution 4.0 International (CC-BY-4.0)](https://creativecommons.org/licenses/by/4.0/).
+Creative Commons Attribution 4.0 International ([CC-BY-4.0](https://creativecommons.org/licenses/by/4.0/)).
