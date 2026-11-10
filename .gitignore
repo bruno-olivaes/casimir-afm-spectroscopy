@@ -1,4 +1,4 @@
-﻿data/zenodo_raw/
+data/zenodo_raw/
 data/*.zip
 data/decca_2003*.png
 data/decca_2003*.jpeg
@@ -9,6 +9,9 @@ __pycache__/
 paper/*.aux
 paper/*.log
 paper/*.out
+manuscript/*.aux
+manuscript/*.log
+manuscript/*.out
 parse_data.py
 patch.py
 src/cosmology_oscillatory_dark_energy.py
