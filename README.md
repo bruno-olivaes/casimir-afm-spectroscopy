@@ -1,6 +1,7 @@
 # Casimir Force & Nanomechanical Spectral Metrology Pipeline (v2.0)
 
-[![License: CC BY 4.0](https://img.shields.io/badge/License-CC_BY_4.0-lightgrey.svg)](https://creativecommons.org/licenses/by/4.0/)
+[![Paper PDF](https://img.shields.io/badge/Paper-PDF_Manuscript-red.svg)](manuscript/main.pdf)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![Version 2.0](https://img.shields.io/badge/Release-v2.0_Peer--Review_Audited-brightgreen.svg)]()
 
