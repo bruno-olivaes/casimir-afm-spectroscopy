@@ -35,3 +35,4 @@ Adicione o badge de citação no topo do `README.md`:
 ```markdown
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.XXXXXXX.svg)](https://doi.org/10.5281/zenodo.XXXXXXX)
 ```
+
