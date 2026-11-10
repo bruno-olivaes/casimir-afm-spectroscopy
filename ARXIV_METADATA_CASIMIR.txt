@@ -1,0 +1,23 @@
+arXiv Submission Metadata (Casimir Metrology)
+==============================================
+
+Title:
+Statistical Pitfalls in Casimir Force Spectroscopy: How to Avoid False Positive Signals
+
+Authors:
+Bruno L. Olivaes
+
+Abstract:
+Precision nanomechanical measurements of the Casimir interaction at sub-micron separations are increasingly audited for hypothetical short-range modifications of gravity and exotic forces. However, residual force curves are intrinsically non-uniformly sampled and contaminated by steep short-range baseline drifts. In this paper, we demonstrate how conventional data-processing choices inadvertently fabricate statistically overwhelming false positive signals or severely degrade experimental sensitivity. Specifically, we show that: (1) naive 3-sigma Gaussian thresholds applied to exponentially distributed periodograms flag up to 36 spurious peaks on pure white noise; (2) unphysical polynomial detrending across steep z^-4 short-range profiles induces Runge-type boundary ringing that generates an apparent oscillatory anomaly at lambda = 583.5 nm with an artificial significance of FAP = 1.49e-45; (3) cubic spline resampling on irregular grids (CV = 40.7%) destroys 57% of true signal variance at short wavelengths, degrading the 90% Minimum Detectable Level by a factor of 2.28; and (4) surface electrostatic patch potentials measured via Kelvin Probe Force Microscopy (KPFM) yield strictly monotonic power-law decays (P proportional to d^-2.29), proving that patch roughness cannot generate periodic residual modulations. Adopting a physically motivated inverse-power baseline collapses residual variance (chi^2/dof = 1.14) and restores the true experimental null result (FAP = 0.163).
+
+Primary Category:
+physics.ins-det (Instrumentation and Detectors)
+
+Cross-list Categories:
+cond-mat.soft, physics.data-an
+
+Comments:
+3 pages, 3 figures, 1 table. Code and data available at https://github.com/bruno-olivaes/casimir-afm-spectroscopy
+
+Journal-ref:
+(Leave blank during initial arXiv submission)
