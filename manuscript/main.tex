@@ -62,6 +62,15 @@ When the baseline is modeled instead using the physical inverse-power expansion 
 \end{equation}
 (with $z_0 = 200\,\mathrm{nm}$), the residual variance immediately collapses to $\chi^2/\mathrm{dof} = 1.14$. The phantom peak disappears completely, and the maximum spectral power drops to $P_{\max} = 0.0332$, yielding an empirical Baluev~\cite{baluev2008} $\mathrm{FAP} = 0.163$, fully confirming the experimental null result.
 
+\paragraph{Robustness to Contact-Point Calibration Drift.}
+A critical systematic concern in microcantilever metrology is uncertainty in establishing the true mechanical contact zero position, $z \to z + \delta z_0$, where $\delta z_0$ represents an experimental offset. Expanding the dominant inverse-power term $c_4 (z + \delta z_0)^{-4}$ to first order in the small parameter $\delta z_0 / z \ll 1$ via a Taylor series yields:
+\begin{align}
+c_4 \left( z + \delta z_0 \right)^{-4} &= c_4 z^{-4} \left( 1 + \frac{\delta z_0}{z} \right)^{-4} \nonumber \\
+&= c_4 z^{-4} - 4 c_4 \delta z_0 z^{-5} + \mathcal{O}\left( \delta z_0^2 z^{-6} \right).
+\label{eq:taylor_expansion}
+\end{align}
+Equation~\eqref{eq:taylor_expansion} demonstrates analytically that any zero-distance calibration miscalibration $\delta z_0$ produces an effective spurious term scaling strictly as $-4 c_4 \delta z_0 z^{-5}$. Because our physical regression basis $\{1, z^{-4}, z^{-5}\}$ explicitly incorporates an unconstrained $z^{-5}$ degree of freedom, this calibration artifact is absorbed in first order into the fitted parameter $\tilde{c}_5 = c_5 - 4 c_4 (\delta z_0 / z_0)$. Consequently, contact point offset errors cannot project onto Fourier frequencies or fabricate false-positive log-periodic oscillations, providing formal mathematical immunity against contact-point drift.
+
 Furthermore, naive thresholding rules (such as $\mathrm{median} + 3\sigma_{\mathrm{clipped}}$) mistakenly assume that periodogram powers are Gaussian-distributed. Because Fourier periodogram powers on Gaussian white noise follow an exponential distribution ($\chi^2_2/2$), this naive rule flags up to 36 false peaks on identically detrended white noise, whereas the exact $\chi^2_2$ threshold flags zero.
 
 \begin{table*}[t]

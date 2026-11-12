@@ -55,7 +55,7 @@ def generate_figure2():
     ax1.scatter(z_zoom, sig_sampled, color='#1f77b4', s=30, zorder=5, label=r'Sampled on irregular grid ($\mathrm{CV} = 40.7\%$)')
     ax1.plot(z_unif, sig_spline, color='#d62728', lw=1.8, label=r'Cubic spline resampled ($57\%$ variance loss)')
     ax1.set_ylabel('Signal amplitude', fontsize=11)
-    ax1.set_title(r'\textbf{Trap 3: High-Frequency Attenuation via Spline Resampling}', fontsize=11, pad=8)
+    ax1.set_title("Trap 3: High-Frequency Attenuation via Spline Resampling", fontsize=11, fontweight="bold", pad=8)
     ax1.grid(True, linestyle=':', alpha=0.6)
     ax1.legend(loc='lower right', fontsize=8.5, framealpha=0.92)
 

@@ -38,8 +38,8 @@ def generate_figure3():
 
     ax.set_xlabel(r'Separation distance $d$ (nm)', fontsize=11)
     ax.set_ylabel(r'Pressure magnitude (Pa)', fontsize=11)
-    ax.set_title(r'\textbf{First-Principles KPFM Patch Potential Decays Monotonically Without Oscillations}',
-                 fontsize=11, pad=8)
+    ax.set_title("First-Principles KPFM Patch Potential Decays Monotonically Without Oscillations",
+                 fontsize=10.5, fontweight="bold", pad=10)
     ax.grid(True, which='both', linestyle=':', alpha=0.5)
     ax.legend(loc='upper right', fontsize=8.5, framealpha=0.92)
     ax.set_xlim(10, 110)

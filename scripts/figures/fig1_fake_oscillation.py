@@ -41,7 +41,7 @@ def generate_figure1():
     ax1.plot(z, p3_fit, color='#d62728', lw=2.0, ls='--', label=r'Cubic polynomial $P_3(z)$ ($\chi^2/\mathrm{dof} = 3.74$)')
     ax1.plot(z, phys_fit, color='#2ca02c', lw=2.2, label=r'Physical basis $\{1, z^{-4}, z^{-5}\}$ ($\chi^2/\mathrm{dof} = 1.14$)')
     ax1.set_ylabel(r'$\Delta P_c$ (mPa)', fontsize=11)
-    ax1.set_title(r'\textbf{Trap 2: Runge Oscillations from Polynomial Detrending on Casimir Data}', fontsize=11, pad=8)
+    ax1.set_title("Trap 2: Runge Oscillations from Polynomial Detrending on Casimir Data", fontsize=11, fontweight="bold", pad=8)
     ax1.grid(True, linestyle=':', alpha=0.6)
     ax1.legend(loc='lower right', fontsize=9, framealpha=0.92)
 
