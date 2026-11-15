@@ -1,8 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-Figure 2: Cubic spline interpolation trap: high-frequency variance attenuation (57% loss)
-on the non-uniform separation grid of Decca et al. (2003) Fig. 3b.
+Figure 2: Cubic spline interpolation trap: high-frequency variance attenuation on the non-uniform separation grid of Decca et al. (2003) Fig. 3b.
 """
 import os
 import numpy as np
@@ -53,7 +52,7 @@ def generate_figure2():
     # Top: Signal waveforms
     ax1.plot(z_dense, sig_dense, color='gray', lw=1.2, ls=':', alpha=0.8, label=r'True physical signal ($\lambda = 7.5\,\mathrm{nm}$, amplitude $1.0$)')
     ax1.scatter(z_zoom, sig_sampled, color='#1f77b4', s=30, zorder=5, label=r'Sampled on irregular grid ($\mathrm{CV} = 40.7\%$)')
-    ax1.plot(z_unif, sig_spline, color='#d62728', lw=1.8, label=r'Cubic spline resampled ($57\%$ variance loss)')
+    ax1.plot(z_unif, sig_spline, color='#d62728', lw=1.8, label=rf'Cubic spline resampled (${var_loss_pct:.1f}\%$ variance loss)')
     ax1.set_ylabel('Signal amplitude', fontsize=11)
     ax1.set_title("Trap 3: High-Frequency Attenuation via Spline Resampling", fontsize=11, fontweight="bold", pad=8)
     ax1.grid(True, linestyle=':', alpha=0.6)
@@ -61,9 +60,10 @@ def generate_figure2():
 
     # Bottom: Point-by-point attenuation error
     err = np.abs(cs(z_dense) - sig_dense)
+    mean_err = float(np.mean(err))
     ax2.fill_between(z_dense, 0, err, color='#d62728', alpha=0.3, label=r'Absolute interpolation error $|s_{\mathrm{spline}}(z) - s_{\mathrm{true}}(z)|$')
     ax2.plot(z_dense, err, color='#d62728', lw=1.0)
-    ax2.axhline(0.57, color='black', ls='--', lw=1.0, label=r'Mean attenuation level ($57\%$ variance destroyed)')
+    ax2.axhline(mean_err, color='black', ls='--', lw=1.0, label=rf'Mean interpolation error (${mean_err:.2f}$ norm. units)')
     ax2.set_xlabel('Separation distance $z$ (nm)', fontsize=11)
     ax2.set_ylabel('Error magnitude', fontsize=11)
     ax2.set_xlim(300, 420)

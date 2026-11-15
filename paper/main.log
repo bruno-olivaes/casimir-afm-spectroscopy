@@ -1,9 +1,9 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.7.6)  7 NOV 2026 09:34
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.7.6)  13 NOV 2026 00:29
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
-**C:/Users/bruno/casimir-afm-spectroscopy/paper/main.tex
-(C:/Users/bruno/casimir-afm-spectroscopy/paper/main.tex
+**./main.tex
+(main.tex
 LaTeX2e <2025-11-01>
 L3 programming layer <2025-12-24>
 (C:\Users\bruno\AppData\Local\Programs\MiKTeX\tex/latex/base\article.cls
@@ -302,7 +302,7 @@ Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 2
 tex.def
 File: l3backend-pdftex.def 2025-10-09 L3 backend support: PDF output (pdfTeX)
 \l__color_backend_stack_int=\count314
-) (C:\Users\bruno\casimir-afm-spectroscopy\paper\main.aux)
+) (main.aux)
 \openout1 = `main.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 16.
@@ -385,8 +385,7 @@ fg
 File: epstopdf-sys.cfg 2021/03/18 v2.0 Configuration of epstopdf for MiKTeX
 ))
 Package hyperref Info: Link coloring OFF on input line 16.
- (C:\Users\bruno\casimir-afm-spectroscopy\paper\main.out)
-(C:\Users\bruno\casimir-afm-spectroscopy\paper\main.out)
+ (main.out) (main.out)
 \@outlinefile=\write3
 \openout3 = `main.out'.
 
@@ -453,50 +452,73 @@ Underfull \hbox (badness 1242) in paragraph at lines 49--51
 ] \OT1/cmr/m/n/10 = 39\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 4 \OMS/cmsy/m/n/10 ^^F
  []
 
-<../output/fig_spectral_comparison.png, id=77, 939.51pt x 686.565pt>
-File: ../output/fig_spectral_comparison.png Graphic file (type png)
-<use ../output/fig_spectral_comparison.png>
-Package pdftex.def Info: ../output/fig_spectral_comparison.png  used on input l
-ine 83.
-(pdftex.def)             Requested size: 480.74132pt x 351.30637pt.
-<../output/fig_MDL_vs_noise.png, id=87, 831.105pt x 325.215pt>
-File: ../output/fig_MDL_vs_noise.png Graphic file (type png)
-<use ../output/fig_MDL_vs_noise.png>
-Package pdftex.def Info: ../output/fig_MDL_vs_noise.png  used on input line 97.
 
+Overfull \hbox (55.20142pt too wide) detected at line 63
+[][][]\OML/cmm/m/it/10 C[]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 z \OT1/cmr/m/n/10 +
+ \OML/cmm/m/it/10 ^^Nz[]\OT1/cmr/m/n/10 )[] = \OML/cmm/m/it/10 C[]z[] [][] \OT1
+/cmr/m/n/10 = \OML/cmm/m/it/10 C[]z[] \OMS/cmsy/m/n/10 ^^@ \OT1/cmr/m/n/10 4\OM
+L/cmm/m/it/10 C[]^^Nz[] z[] \OT1/cmr/m/n/10 + \OMS/cmsy/m/n/10 O  [] \OML/cmm/m
+/it/10 :
+ []
+
+<fig_spectral_comparison.png, id=79, 939.51pt x 686.565pt>
+File: fig_spectral_comparison.png Graphic file (type png)
+<use fig_spectral_comparison.png>
+Package pdftex.def Info: fig_spectral_comparison.png  used on input line 90.
+(pdftex.def)             Requested size: 480.74132pt x 351.30637pt.
+<fig_MDL_vs_noise.png, id=89, 831.105pt x 325.215pt>
+File: fig_MDL_vs_noise.png Graphic file (type png)
+<use fig_MDL_vs_noise.png>
+Package pdftex.def Info: fig_MDL_vs_noise.png  used on input line 104.
 (pdftex.def)             Requested size: 245.38435pt x 96.01698pt.
 
-Underfull \hbox (badness 4024) in paragraph at lines 102--102
+Underfull \hbox (badness 4024) in paragraph at lines 109--109
 []\OT1/cmr/bx/n/14.4 2025 KPFM Patch-Potential
  []
 
 
-Underfull \hbox (badness 1571) in paragraph at lines 103--104
+Underfull \hbox (badness 1571) in paragraph at lines 110--111
 \OT1/cmr/m/n/10 dataset (\OT1/cmtt/m/n/10 W1P3[]E4[]measarea3 0003.h5\OT1/cmr/m
 /n/10 , $2 \OML/cmm/m/it/10 ^^V\OT1/cmr/m/n/10 m \OMS/cmsy/m/n/10 ^^B \OT1/cmr/
 m/n/10 2 \OML/cmm/m/it/10 ^^V\OT1/cmr/m/n/10 m$,
  []
 
-<../output/fig_kpfm_patch_audit.png, id=90, 1047.915pt x 325.215pt>
-File: ../output/fig_kpfm_patch_audit.png Graphic file (type png)
-<use ../output/fig_kpfm_patch_audit.png>
-Package pdftex.def Info: ../output/fig_kpfm_patch_audit.png  used on input line
- 107.
+[2]
+<fig_kpfm_patch_audit.png, id=113, 1047.915pt x 325.215pt>
+File: fig_kpfm_patch_audit.png Graphic file (type png)
+<use fig_kpfm_patch_audit.png>
+Package pdftex.def Info: fig_kpfm_patch_audit.png  used on input line 114.
 (pdftex.def)             Requested size: 480.74132pt x 149.1938pt.
 
-Underfull \hbox (badness 2617) in paragraph at lines 116--118
+Underfull \hbox (badness 2617) in paragraph at lines 123--125
 \OML/cmm/m/it/10 P[]\OT1/cmr/m/n/10 (50[]) = 2\OML/cmm/m/it/10 :\OT1/cmr/m/n/10
  90[]$, and $\OML/cmm/m/it/10 P[]\OT1/cmr/m/n/10 (100[]) =
  []
 
-[2] [3
 
-] [4
+Underfull \hbox (badness 1715) in paragraph at lines 127--128
+\OT1/cmr/m/n/10 extreme-value statis-tics, em-pir-i-cal Casimir resid-u-als
+ []
 
- <C:/Users/bruno/casimir-afm-spectroscopy/output/fig_spectral_comparison.png> <
-C:/Users/bruno/casimir-afm-spectroscopy/output/fig_MDL_vs_noise.png>] [5 <C:/Us
-ers/bruno/casimir-afm-spectroscopy/output/fig_kpfm_patch_audit.png>]
-(C:\Users\bruno\casimir-afm-spectroscopy\paper\main.aux)
+
+Underfull \hbox (badness 1178) in paragraph at lines 127--128
+\OT1/cmr/m/n/10 show zero ev-i-dence of pe-ri-odic anoma-lies ($[] =
+ []
+
+
+Underfull \hbox (badness 6825) in paragraph at lines 130--131
+\OT1/cmr/m/n/10 All vec-tor ex-trac-tion scripts, Baluev GLS rou-
+ []
+
+
+Underfull \hbox (badness 2409) in paragraph at lines 130--131
+\OT1/cmr/m/n/10 tines, KPFM Speake--Trenner in-te-gra-tion pipelines,
+ []
+
+[3] [4
+
+ <./fig_spectral_comparison.png> <./fig_MDL_vs_noise.png>] [5 <./fig_kpfm_patch
+_audit.png>] (main.aux)
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2025-12-24>
@@ -505,13 +527,13 @@ Package rerunfilecheck Info: File `main.out' has not changed.
 (rerunfilecheck)             Checksum: D90C6FCC05FAB110B5C8B0C79B9156C8;1179.
  ) 
 Here is how much of TeX's memory you used:
- 10313 strings out of 467871
- 157994 string characters out of 5418377
- 602038 words of memory out of 5000000
- 39030 multiletter control sequences out of 15000+600000
+ 10314 strings out of 467871
+ 157407 string characters out of 5418377
+ 601187 words of memory out of 5000000
+ 39031 multiletter control sequences out of 15000+600000
  639441 words of font info for 85 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 75i,13n,79p,2775b,534s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 75i,13n,79p,2883b,534s stack positions out of 10000i,1000n,20000p,200000b,200000s
 <C:/Users/bruno/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/
 cmbx10.pfb><C:/Users/bruno/AppData/Local/Programs/MiKTeX/fonts/type1/public/ams
 fonts/cm/cmbx12.pfb><C:/Users/bruno/AppData/Local/Programs/MiKTeX/fonts/type1/p
@@ -541,10 +563,9 @@ ype1/public/amsfonts/cm/cmtt9.pfb><C:/Users/bruno/AppData/Local/Programs/MiKTeX
 /fonts/type1/public/amsfonts/symbols/msam10.pfb><C:/Users/bruno/AppData/Local/P
 rograms/MiKTeX/fonts/type1/public/amsfonts/symbols/msbm10.pfb><C:/Users/bruno/A
 ppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/symbols/msbm7.pfb>
-Output written on C:\Users\bruno\casimir-afm-spectroscopy\paper\main.pdf (5 pag
-es, 3964744 bytes).
+Output written on main.pdf (5 pages, 3970511 bytes).
 PDF statistics:
- 250 PDF objects out of 1000 (max. 8388607)
- 37 named destinations out of 1000 (max. 500000)
+ 258 PDF objects out of 1000 (max. 8388607)
+ 39 named destinations out of 1000 (max. 500000)
  56 words of extra memory for PDF output out of 10000 (max. 10000000)
 

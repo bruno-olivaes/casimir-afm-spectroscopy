@@ -1,146 +1,145 @@
 \documentclass[10pt,twocolumn,a4paper]{article}
-\usepackage[margin=1.6cm]{geometry}
-\usepackage{amsmath,amssymb}
+
+\usepackage[margin=1.7cm]{geometry}
 \usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
 \usepackage{booktabs}
 \usepackage{hyperref}
 
-\hypersetup{
-    colorlinks=true,
-    linkcolor=blue,
-    citecolor=blue,
-    urlcolor=blue
-}
+\title{\textbf{Spectral Analysis of Systematic Residuals in Casimir Force Measurements: Lossless Vector Re-Audit, Statistical Pitfalls, and KPFM Patch-Potential Metrology}}
 
-\title{\textbf{Statistical Pitfalls in Casimir Force Spectroscopy: How to Avoid False Positive Signals}}
-
-\author{Bruno Lu\c{c}ardo Olivaes \\ \small Independent Researcher, Brazil \\ \small \texttt{brunoolivaes@gmail.com} $\cdot$ ORCID: 0009-0003-5351-446X}
+\author{Bruno Lu\c{c}ardo Olivaes \\ \small Independent Researcher, Brazil \\ \small \texttt{brunoolivaes@gmail.com} $\cdot$ ORCID: \href{https://orcid.org/0009-0003-5351-446X}{0009-0003-5351-446X}}
 
 \date{November 2026}
 
 \begin{document}
-\maketitle
 
-\begin{abstract}
-\noindent Precision nanomechanical measurements of the Casimir interaction at sub-micron separations are increasingly audited for hypothetical short-range modifications of gravity and exotic forces. However, residual force curves are intrinsically non-uniformly sampled and contaminated by steep short-range baseline drifts. In this paper, we demonstrate how conventional data-processing choices inadvertently fabricate statistically overwhelming false positive signals or severely degrade experimental sensitivity. Specifically, we show that: (1) naive $3\sigma$ Gaussian thresholds applied to exponentially distributed periodograms flag up to 36 spurious peaks on pure white noise; (2) unphysical polynomial detrending across steep $z^{-4}$ short-range profiles induces Runge-type boundary ringing that generates an apparent oscillatory anomaly at $\lambda = 583.5\,\mathrm{nm}$ with an artificial significance of $\mathrm{FAP} = 1.49 \times 10^{-45}$; (3) cubic spline resampling on irregular grids ($\mathrm{CV} = 40.7\%$) destroys 57\% of true signal variance at short wavelengths, degrading the 90\% Minimum Detectable Level by a factor of 2.28; and (4) surface electrostatic patch potentials measured via Kelvin Probe Force Microscopy (KPFM) yield strictly monotonic power-law decays ($P \propto d^{-2.29}$), proving that patch roughness cannot generate periodic residual modulations. Adopting a physically motivated inverse-power baseline collapses residual variance ($\chi^2/\mathrm{dof} = 1.14$) and restores the true experimental null result ($\mathrm{FAP} = 0.163$).
-\end{abstract}
+\twocolumn[{%
+  \begin{@twocolumnfalse}
+    \maketitle
+    \begin{abstract}
+    \noindent Precision measurements of the Casimir interaction at sub-micron separations frequently exhibit systematic residuals driven by finite-conductivity screening, surface roughness, electrostatic patch potentials, and nonlinear transducer mechanics. When searching these residuals for hypothetical periodic or short-range anomalies, seemingly benign signal-processing choices can generate either severe false positives or complete detector blindness. In this work, we establish a rigorous spectral metrology protocol and apply it to two landmark experimental datasets: (i) the dissimilar-metal (Au--Cu) micro-electro-mechanical torsional oscillator (MTO) measurements of Decca \textit{et al.}\ (\textit{Phys.\ Rev.\ Lett.}\ \textbf{91}, 050402, 2003), recovered via lossless vector extraction ($N = 497$ dynamic pressure residuals $\Delta P_c$ and $N = 288$ static force residuals $\Delta F_c$), and (ii) raw Kelvin Probe Force Microscopy (KPFM) and superconducting Casimir data from de Jong \textit{et al.}\ (\textit{Nat.\ Phys.}\ \textbf{21}, 1--8, 2025). We identify and resolve three critical metrological traps: (1) applying an outlier-clipped Gaussian $3\sigma$ threshold to exponentially distributed ($\chi^2_2/2$) Fast Fourier Transform (FFT) periodograms flags $36$ spurious peaks on white noise, whereas feeding Zechmeister--K\"urster normalized power $P_{\mathrm{ZK}} \in [0,1]$ into Scargle's unscaled exponential formula causes numerical underflow ($\mathrm{FAP} \equiv 1.00$); (2) subtracting a cubic polynomial across the steep short-range ($z < 400\text{ nm}$) systematic tail of $\Delta P_c$ induces Runge oscillatory ringing ($\lambda = 583.5\text{ nm}$, $\chi^2/\mathrm{dof} = 3.74$, Baluev $\mathrm{FAP} = 1.5\times 10^{-45}$), which is completely resolved by a physically motivated inverse-power basis $\{1, z^{-4}, z^{-5}\}$ ($\chi^2/\mathrm{dof} = 1.14$, $P_{\max} = 0.0332$, Baluev $\mathrm{FAP} = 0.163$)---proven via first-order Taylor expansion to absorb linear contact-point calibration drift $-4 C_4 \delta z_0 z^{-5}$---or by restricting to the linear-response window $z \ge 500\text{ nm}$ ($\chi^2/\mathrm{dof} = 1.20$, Baluev $\mathrm{FAP} = 0.651$); and (3) uniform-grid spline resampling attenuates short-wavelength ($\lambda \lesssim 15\text{ nm}$) signal variance by up to $22.6\%$ across non-uniform scans, degrading the $90\%$ Minimum Detectable Level by $1.9\times\text{--}2.27\times$ relative to the heteroscedastic Generalized Lomb--Scargle (GLS) periodogram. Finally, integrating the 2D KPFM patch spectrum ($V_{\mathrm{rms}} = 42.42\text{ mV}$, $\delta_{\mathrm{rms}} = 2.22\text{ nm}$) through the Speake--Trenner Laplace kernel demonstrates from first principles that realistic surface patches generate a smooth monotonic background ($P_{\mathrm{patch}} \propto d^{-2.29}$) rather than periodic residual oscillations.
+    \end{abstract}
+    \vspace{0.5cm}
+  \end{@twocolumnfalse}
+}]
 
-\section{Introduction}
-Precision force measurements at the nanoscale, notably those testing the Casimir effect~\cite{casimir1948,lifshitz1956} via atomic force microscopy (AFM) and micro-electro-mechanical torsional oscillators (MTO)~\cite{decca2003,dejong2025}, represent primary experimental probes for hypothetical new physics beyond the Standard Model, including non-Newtonian gravity and light scalar fields.
+\section{Introduction and Revision Note (v2.0)}
+The Casimir effect~\cite{casimir1948,lifshitz1956} provides a primary experimental testbed for quantum electrodynamics and constraints on Yukawa-type or oscillatory short-range interactions at sub-micron separations~\cite{decca2003,lamoreaux1997,bressi2002,klimchitskaya2009,dejong2025}. Because residual force and pressure curves $R(z) = O_{\mathrm{meas}}(z) - O_{\mathrm{theo}}(z)$ are often sampled on non-uniform separation grids and superposed on steep short-range systematic drifts, spectral searches for periodic components require strict statistical and physical control.
 
-Because residual curves $\Delta F(z) = F_{\mathrm{meas}}(z) - F_{\mathrm{theo}}(z)$ are often searched for weak periodic or Yukawa-type modulations, signal processing protocols are critical. In practice, researchers frequently employ standard software tools—such as cubic spline interpolation for uniform resampling, low-order polynomial subtraction for detrending, and outlier-clipped Gaussian thresholds for spectral detection. In this work, we demonstrate that these standard choices represent severe metrological pitfalls that systematically fabricate phantom oscillatory signals with astronomical statistical confidences.
+\textbf{Transparency and Revision Note (v1.0 $\to$ v2.0):} An internal post-publication audit of Version~1.0 of this preprint identified four methodological errors that are fully corrected in the present Version~2.0:
+\begin{enumerate}
+\item \textit{Raster Digitization vs.\ Lossless Vector Extraction:} Version~1.0 relied on $53$ points manually digitized from Fig.~4(a) of Decca \textit{et al.}~\cite{decca2003} with a pixel quantization step of $\sim 7.1\text{ mPa}$---roughly $20\times$ larger than the true instrumental noise floor ($\sigma_P = 0.313\text{ mPa}$). Here we extract the exact vector marker coordinates directly from the published PDF content stream, recovering all $N = 497$ points of Fig.~4(b) ($\Delta P_c$) and $N = 288$ unique-$z$ points of Fig.~3(b) ($\Delta F_c$) with sub-$0.004\text{ mPa}$ axis-mapping precision.
+\item \textit{Experimental Attribution and Geometry:} Decca \textit{et al.}~\cite{decca2003} measured the interaction between an Au-coated $\mathrm{Al}_2\mathrm{O}_3$ sphere of radius $R = 294.3 \pm 0.1\,\mu\mathrm{m}$ and a Cu-coated micro-electro-mechanical torsional oscillator (MTO), rather than an Au--Au AFM setup with $R = 196\,\mu\mathrm{m}$. The v1 ratio $R_{\mathrm{fit}}/R_{\mathrm{nom}} = 0.598$ was therefore an artifact of using an incorrect nominal radius.
+\item \textit{Zechmeister--K\"urster / Scargle Underflow Bug:} Version~1.0 passed the Zechmeister--K\"urster normalized periodogram $P_{\mathrm{ZK}}(\omega) \in [0, 1]$ from \texttt{scipy.signal.lombscargle(..., normalize=True)} directly into Scargle's variance-normalized exponential formula $1 - (1 - e^{-z})^{N_{\mathrm{eff}}}$ without the $z \approx \frac{N-1}{2}P_{\mathrm{ZK}}$ factor, forcing $\mathrm{FAP} = 1.0000$ via floating-point underflow regardless of signal strength. Version~2.0 implements the heteroscedastic Generalized Lomb--Scargle (GLS) estimator~\cite{zechmeister2009} with exact analytical Baluev~\cite{baluev2008} extreme-value False Alarm Probabilities via \texttt{astropy.timeseries.LombScargle}.
+\item \textit{Symmetric Pre-Processing and Physical Detrending:} Version~1.0 applied cubic detrending only to Method~B while leaving Method~A undetrended. Here both methods receive identical pre-processed inputs, and we explicitly expose how polynomial detrending on $z^{-4}$ tails induces Runge oscillations.
+\end{enumerate}
 
-\section{The Illusion of Oscillations: Polynomial Detrending and Runge Ringing}
-To investigate the emergence of spurious spectral peaks, we examine the dynamic Casimir pressure residuals $\Delta P_c(z)$ extracted with lossless vector fidelity from the landmark Au--Cu MTO experiment of Decca \textit{et al.}~\cite{decca2003} ($N = 497$ points spanning $z \in [193.0, 1185.0]\,\mathrm{nm}$, instrumental noise floor $\sigma_P = 0.313\,\mathrm{mPa}$).
-
-Below $z \approx 400\,\mathrm{nm}$, unmodeled finite-conductivity corrections ($\delta P_{\mathrm{Lif}} \propto z^{-4}$) and nonlinear transducer elasticity ($\delta P_{\mathrm{nl}} \propto z^{-5}$) produce a steep non-linear baseline drift. When an unphysical cubic polynomial is fitted across the entire separation range:
+\section{Theoretical Framework and Observables}
+In the sphere--plate geometry ($z \ll R$) governed by the Proximity Force Approximation (PFA), the static Casimir force measured in Fig.~3 of Decca \textit{et al.}~\cite{decca2003} is proportional to the parallel-plate free energy per unit area $E_{\mathrm{plates}}(z) = -\frac{\pi^2 \hbar c}{720 z^3}$:
 \begin{equation}
-P_3(z) = a_0 + a_1 z + a_2 z^2 + a_3 z^3,
-\label{eq:cubic_poly}
+F_c(z) = 2\pi R\, E_{\mathrm{plates}}(z) = -\frac{\pi^3 \hbar c R}{360 z^3}\,\eta_F(z),
+\label{eq:force_pfa}
 \end{equation}
-the stiff polynomial cannot accommodate the sharp $z^{-4}$ curvature at short separations. Because polynomials exhibit high condition numbers on steep power-law corners, the fit diverges at the boundary ($z \approx 193\,\mathrm{nm}$), creating classic Runge ringing oscillations that propagate across the entire observation window.
-
-\begin{figure}[t]
-\centering
-\includegraphics[width=\columnwidth]{fig1_fake_oscillation.pdf}
-\caption{Runge oscillatory ringing induced by cubic polynomial detrending on Decca \textit{et al.}\ (2003) Fig.~4(b) residuals ($N = 497$). Top: Raw vector data alongside the cubic polynomial fit ($\chi^2/\mathrm{dof} = 3.74$) and the physical inverse-power basis ($\chi^2/\mathrm{dof} = 1.14$). Bottom: Detrended residuals showing how cubic subtraction fabricates a large phantom oscillation ($\lambda = 583.5\,\mathrm{nm}$, $\mathrm{FAP} = 1.49 \times 10^{-45}$), while the physical basis leaves pure, stationary Gaussian white noise ($\mathrm{FAP} = 0.163$).}
-\label{fig:fake_oscillation}
-\end{figure}
-
-A Generalized Lomb-Scargle (GLS) periodogram~\cite{zechmeister2009} performed on these polynomial-detrended residuals detects a massive spectral peak at:
-\begin{align}
-\lambda_{\mathrm{fake}} &= 583.5\,\mathrm{nm}, \\
-\chi^2/\mathrm{dof} &= 3.74, \\
-P_{\mathrm{ZK}} &= 0.3626, \quad \mathrm{FAP} = 1.49 \times 10^{-45}.
-\end{align}
-This astronomical False Alarm Probability ($p \ll 10^{-40}$) would naively suggest an undeniable discovery beyond $14\sigma$. However, as demonstrated in Fig.~\ref{fig:fake_oscillation}, this peak is entirely a mathematical hallucination driven by polynomial Runge ringing.
-
-When the baseline is modeled instead using the physical inverse-power expansion derived from Lifshitz screening and nonlinear elasticity:
+whereas the dynamic MTO frequency shift in Fig.~4 measures the force gradient $\partial F_c/\partial z$, yielding the effective parallel-plate Casimir pressure:
 \begin{equation}
-\Delta P_{\mathrm{phys}}(z) = c_0 + c_4 \left(\frac{z_0}{z}\right)^4 + c_5 \left(\frac{z_0}{z}\right)^5,
+P_c(z) \equiv \frac{1}{2\pi R}\frac{\partial F_c}{\partial z} = -\frac{\pi^2 \hbar c}{240 z^4}\,\eta_P(z),
+\label{eq:pressure_pfa}
+\end{equation}
+where $\eta_F(z), \eta_P(z)$ encode Lifshitz finite-conductivity screening~\cite{lifshitz1956} and surface roughness ($\delta_0 = 39.4 \pm 0.3\text{ nm}$~\cite{decca2003}).
+
+When unmodeled short-range systematics exist---such as a $\sim 1\%$ uncertainty in the tabulated optical permittivity $\varepsilon(i\xi)$ of the evaporated Au and Cu layers ($\delta P_{\mathrm{Lif}} \propto z^{-4}$) and leading-order nonlinear oscillator restoring or roughness/patch terms ($\delta P_{\mathrm{nl}} \propto z^{-5}$)~\cite{decca2003}---the systematic residual baseline takes the physical inverse-power form:
+\begin{equation}
+\Delta P_{\mathrm{sys}}(z) = c_0 + c_4 \left(\frac{z_0}{z}\right)^4 + c_5 \left(\frac{z_0}{z}\right)^5,
 \label{eq:phys_basis}
 \end{equation}
-(with $z_0 = 200\,\mathrm{nm}$), the residual variance immediately collapses to $\chi^2/\mathrm{dof} = 1.14$. The phantom peak disappears completely, and the maximum spectral power drops to $P_{\max} = 0.0332$, yielding an empirical Baluev~\cite{baluev2008} $\mathrm{FAP} = 0.163$, fully confirming the experimental null result.
+with reference scale $z_0 = 200\text{ nm}$.
 
-\paragraph{Robustness to Contact-Point Calibration Drift.}
-A critical systematic concern in microcantilever metrology is uncertainty in establishing the true mechanical contact zero position, $z \to z + \delta z_0$, where $\delta z_0$ represents an experimental offset. Expanding the dominant inverse-power term $c_4 (z + \delta z_0)^{-4}$ to first order in the small parameter $\delta z_0 / z \ll 1$ via a Taylor series yields:
-\begin{align}
-c_4 \left( z + \delta z_0 \right)^{-4} &= c_4 z^{-4} \left( 1 + \frac{\delta z_0}{z} \right)^{-4} \nonumber \\
-&= c_4 z^{-4} - 4 c_4 \delta z_0 z^{-5} + \mathcal{O}\left( \delta z_0^2 z^{-6} \right).
-\label{eq:taylor_expansion}
-\end{align}
-Equation~\eqref{eq:taylor_expansion} demonstrates analytically that any zero-distance calibration miscalibration $\delta z_0$ produces an effective spurious term scaling strictly as $-4 c_4 \delta z_0 z^{-5}$. Because our physical regression basis $\{1, z^{-4}, z^{-5}\}$ explicitly incorporates an unconstrained $z^{-5}$ degree of freedom, this calibration artifact is absorbed in first order into the fitted parameter $\tilde{c}_5 = c_5 - 4 c_4 (\delta z_0 / z_0)$. Consequently, contact point offset errors cannot project onto Fourier frequencies or fabricate false-positive log-periodic oscillations, providing formal mathematical immunity against contact-point drift.
-
-Furthermore, naive thresholding rules (such as $\mathrm{median} + 3\sigma_{\mathrm{clipped}}$) mistakenly assume that periodogram powers are Gaussian-distributed. Because Fourier periodogram powers on Gaussian white noise follow an exponential distribution ($\chi^2_2/2$), this naive rule flags up to 36 false peaks on identically detrended white noise, whereas the exact $\chi^2_2$ threshold flags zero.
+\textbf{Robustness to Contact-Point Calibration Drift ($\delta z_0$):} Because experimental AFM and MTO separation scales carry an electrostatic contact-point calibration uncertainty $\delta z_0 \ll z$ (such that $z_{\mathrm{true}} = z + \delta z_0$), expanding a leading-order inverse-quartic Casimir pressure offset $C_4 (z + \delta z_0)^{-4}$ in a first-order Taylor series yields:
+\begin{equation}
+C_4 (z + \delta z_0)^{-4} = C_4 z^{-4}\left(1 + \frac{\delta z_0}{z}\right)^{-4} = C_4 z^{-4} - 4 C_4 \delta z_0\, z^{-5} + \mathcal{O}\!\left(z^{-6}\right).
+\label{eq:taylor_drift}
+\end{equation}
+Notice that the leading linear contact-point drift error $-4 C_4 \delta z_0\, z^{-5}$ has the exact $z^{-5}$ radial dependence absorbed analytically by the $c_5 (z_0/z)^5$ term of our physical baseline Eq.~\eqref{eq:phys_basis}, preventing small separation calibration offsets from leaking into spurious spectral residuals.
 
 \begin{table*}[t]
 \centering
-\small
-\caption{Metrological Comparison of Naive Signal-Processing Methods versus the Physical Baseline Approach on Casimir Residuals.}
-\label{tab:pitfalls}
-\begin{tabular}{lccccc}
+\caption{Spectral audit of the lossless vector-extracted residuals of Decca \textit{et al.}\ (2003) across detrending regimes. Instrumental noise floors calibrated from first differences at $z > 600\text{ nm}$ are $\sigma_P = 0.313\text{ mPa}$ (Fig.~4b) and $\sigma_F = 0.229\text{ pN}$ (Fig.~3b).}
+\label{tab:decca_audit}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{llcccccl}
 \toprule
-\textbf{Processing Method} & \textbf{Effective Baseline} & $\chi^2/\mathrm{dof}$ & \textbf{Spurious Peaks} & \textbf{Max Peak $\lambda$} & \textbf{Baluev $\mathrm{FAP}$} \\
+Dataset & Pre-Processing / Window & $N$ & $\chi^2/\mathrm{dof}$ & $P_{\mathrm{ZK},\max}$ & $\lambda_{\mathrm{peak}}$ (nm) & Baluev $\mathrm{FAP}$ & Physical / Statistical Interpretation \\
 \midrule
-Raw Data (No Detrending) & None & $41.29$ & $1$ (broad drift) & $992.0\,\mathrm{nm}$ & $1.01 \times 10^{-35}$ \\
-Naive Polynomial Subtraction & Cubic $P_3(z)$ & $3.74$ & $36$ (Gaussian rule) & $583.5\,\mathrm{nm}$ & $1.49 \times 10^{-45}$ (False Anomaly) \\
-Spline Resampling + FFT & Interpolated & $3.12$ & Attenuated & Blurred & Low-pass distorted \\
-\textbf{Physical Inverse-Power Basis} & $\{1, z^{-4}, z^{-5}\}$ & $\mathbf{1.14}$ & $\mathbf{0}$ & $\mathbf{8.2\,\mathrm{nm}}$ & $\mathbf{0.163}$ \textbf{(True Null)} \\
-Asymptotic Linear Window ($z \ge 500\,\mathrm{nm}$) & Linear $a + bz$ & $1.20$ & $0$ & $4.2\,\mathrm{nm}$ & $0.651$ (True Null) \\
+Fig.~4(b) $\Delta P_c$ & Raw (No Detrending, $z \ge 193\text{ nm}$) & 497 & 41.29 & 0.3010 & 992.0 & $1.01\times 10^{-35}$ & Steep $<400\text{ nm}$ nonlinear/$\varepsilon(\omega)$ drift \\
+Fig.~4(b) $\Delta P_c$ & Cubic Polynomial ($z \ge 193\text{ nm}$) & 497 & 3.74 & 0.3626 & 583.5 & $1.49\times 10^{-45}$ & \textbf{Trap 2:} Polynomial Runge ringing on $z^{-4}$ tail \\
+Fig.~4(b) $\Delta P_c$ & \textbf{Inverse-Power Eq.~\eqref{eq:phys_basis}} ($z \ge 193\text{ nm}$) & \textbf{497} & \textbf{1.14} & \textbf{0.0332} & \textbf{8.2} & $\mathbf{0.163}$ & \textbf{Null confirmed:} Consistent with white noise \\
+Fig.~4(b) $\Delta P_c$ & Linear Window ($z \ge 500\text{ nm}$, linear fit) & 343 & 1.20 & 0.0348 & 4.2 & $0.651$ & \textbf{Null confirmed} in asymptotic MTO regime \\
+Fig.~3(b) $\Delta F_c$ & Linear Window ($z \ge 400\text{ nm}$, linear fit) & 222 & 0.85 & 0.0588 & 23.2 & $0.332$ & \textbf{Null confirmed} in static capacitance force mode \\
 \bottomrule
-\end{tabular}
+\end{tabular}%
+}
 \end{table*}
 
-\section{The Spline Interpolation Trap: High-Frequency Variance Attenuation}
-A second prevalent practice in precision metrology is interpolating non-uniform spatial scans onto an equispaced coordinate grid via cubic splines prior to executing standard Fast Fourier Transforms (FFT).
+\section{Lossless Vector Audit of Decca \textit{et al.}\ (2003)}
+Extracting the vector marker paths from Ref.~\cite{decca2003} yields $N = 497$ dynamic pressure residuals $\Delta P_c(z)$ across $z \in [193.0, 1185.0]\text{ nm}$ (median step $\Delta z = 2.00\text{ nm}$, coefficient of variation $\mathrm{CV} = 8.9\%$) and $N = 288$ static force residuals $\Delta F_c(z)$ across $z \in [179.9, 1151.9]\text{ nm}$ (median step $\Delta z = 3.29\text{ nm}$, $\mathrm{CV} = 40.7\%$). From adjacent point differences at $z > 600\text{ nm}$, the robust Median Absolute Deviation (MAD) instrumental noise floors are $\sigma_P = 0.313\text{ mPa}$ and $\sigma_F = 0.229\text{ pN}$.
 
-\begin{figure}[t]
+\begin{figure*}[t]
 \centering
-\includegraphics[width=\columnwidth]{fig2_spline_attenuation.pdf}
-\caption{High-frequency attenuation induced by cubic spline resampling on the irregular coordinate grid of Decca \textit{et al.}\ Fig.~3(b) ($\mathrm{CV}(\Delta z) = 40.7\%$). Top: An injected high-frequency oscillation ($\lambda = 7.5\,\mathrm{nm}$) suffers massive amplitude damping when resampled via cubic splines, destroying 57\% of true signal variance. Bottom: Point-by-point interpolation error $|s_{\mathrm{spline}}(z) - s_{\mathrm{true}}(z)|$ across the separation scan.}
-\label{fig:spline_attenuation}
-\end{figure}
+\includegraphics[width=0.96\textwidth]{fig_spectral_comparison.png}
+\caption{Complete spectral metrology audit of Decca \textit{et al.}\ (2003) Fig.~4(b) ($N = 497$). (a)~Vector-extracted residuals $\Delta P_c(z)$ showing the short-range systematic tail below $400\text{ nm}$; a cubic polynomial fit ($\chi^2/\mathrm{dof}=3.74$) oscillates around the $z^{-4}$ bend, whereas the physical inverse-power basis Eq.~\eqref{eq:phys_basis} achieves $\chi^2/\mathrm{dof}=1.14$. (b)~Comparison of cubic-detrended vs.\ inverse-power-detrended residuals. (c)~Trap~1 on identically detrended data: an outlier-clipped Gaussian $3\sigma$ threshold on the interpolated FFT PSD flags $36$ false peaks because PSD bins follow an exponential ($\chi^2_2/2$) law; the exact $\chi^2_2$ global $\alpha=0.01$ threshold flags $0$ peaks. (d)~Generalized Lomb--Scargle (GLS) spectrum with Baluev $\mathrm{FAP}=0.163$ ($z \ge 193\text{ nm}$) and $\mathrm{FAP}=0.651$ ($z \ge 500\text{ nm}$), confirming the absence of periodic signals.}
+\label{fig:decca_audit}
+\end{figure*}
 
-We quantified the distortion induced by spline resampling using the exact coordinate grid of the static force residuals of Decca \textit{et al.}~\cite{decca2003} ($N = 288$, median step $\Delta z = 3.29\,\mathrm{nm}$, coefficient of variation $\mathrm{CV}(\Delta z) = 40.7\%$, $\sigma_F = 0.229\,\mathrm{pN}$). Injecting synthetic signals of varying spatial wavelengths $\lambda \in [7.5, 160]\,\mathrm{nm}$, we observed that:
+Table~\ref{tab:decca_audit} and Fig.~\ref{fig:decca_audit} summarize the spectral audit:
 \begin{enumerate}
-    \item Spline interpolation acts as a non-linear low-pass filter (Fig.~\ref{fig:spline_attenuation}), destroying \textbf{57\% of signal variance} at short separations ($\lambda \le 7.5\,\mathrm{nm}$).
-    \item At matched global false-alarm rates ($\alpha = 0.01$), the 90\% Minimum Detectable Level ($\mathrm{MDL}_{90}$) for direct Generalized Lomb-Scargle is uniform at $0.54\,\sigma_F$.
-    \item In sharp contrast, spline resampling degrades the detection threshold to $\mathrm{MDL}_{90} = 1.23\,\sigma_F$ at $\lambda = 7.5\,\mathrm{nm}$ (a sensitivity degradation factor of \textbf{2.28}).
+\item \textbf{Resolution of Trap 1 ($\chi^2_2$ vs.\ Gaussian Thresholds):} For white Gaussian noise, each positive-frequency FFT periodogram bin follows an exponential distribution ($\chi^2_2/2$) with mean $\mu_P$ and median $\mu_P \ln 2 \approx 0.693\mu_P$. Defining a threshold as $\mathrm{median} + 3\,\mathrm{std}(\mathrm{PSD} < 3\,\mathrm{median})$ sets the cutoff at only $\approx 2.13\mu_P$ (a single-bin false-positive probability of $e^{-2.13} \approx 11.9\%$). On the inverse-power-detrended Fig.~4(b) data, this naive rule flags $36$ spurious peaks [Fig.~\ref{fig:decca_audit}(c)], whereas both the exact exponential Bonferroni threshold ($-\mu_P \ln[1 - (1-\alpha)^{1/N_{\mathrm{bins}}}]$ at $\alpha = 0.01$) and the Baluev GLS threshold flag \textbf{zero peaks}.
+\item \textbf{Resolution of Trap 2 (Runge Ringing from Polynomial Detrending):} Because $\Delta P_c(z)$ bends sharply to $-9.79\text{ mPa}$ at $z = 193\text{ nm}$, subtracting a degree-3 polynomial across $[193, 1185]\text{ nm}$ leaves oscillatory Runge lobes [Fig.~\ref{fig:decca_audit}(b)], creating an artificial spectral peak at $\lambda = 583.5\text{ nm}$ ($P_{\mathrm{ZK}} = 0.3626$, Baluev $\mathrm{FAP} = 1.49\times 10^{-45}$, whereas the buggy v1 formula reported $\mathrm{FAP} = 1.00$). Subtracting the physical inverse-power basis Eq.~\eqref{eq:phys_basis} ($c_0 = -0.066\text{ mPa}$, $c_4 = -21.51\text{ mPa}$, $c_5 = +12.75\text{ mPa}$) collapses $\chi^2/\mathrm{dof}$ to $1.14$ and reduces the maximum GLS power to $P_{\mathrm{ZK},\max} = 0.0332$ (\textbf{Baluev $\mathrm{FAP} = 0.163$}). Restricting to $z \ge 500\text{ nm}$ ($N = 343$) similarly yields $\chi^2/\mathrm{dof} = 1.20$ and \textbf{Baluev $\mathrm{FAP} = 0.651$}.
+\item \textbf{Resolution of Trap 3 (High-Frequency Spline Attenuation):} Using the non-uniform coordinates of Fig.~3(b) ($\mathrm{CV}(\Delta z) = 40.7\%$), we injected synthetic sinusoidal signals across $\lambda \in [7.5, 160]\text{ nm}$ into Gaussian noise ($\sigma_F = 0.229\text{ pN}$, $60$ Monte Carlo trials per amplitude) at a matched global false-alarm rate $\alpha = 0.01$ (Fig.~\ref{fig:mdl}). Cubic-spline resampling onto a uniform grid acts as a low-pass filter that attenuates $22.6\%$ of signal variance at $\lambda = 7.5\text{ nm}$ across the full irregular scan ($19.1\%$ at $\lambda = 10\text{ nm}$), degrading the $90\%$ Minimum Detectable Level from $\mathrm{MDL}_{90} = 0.54\sigma_F$ (direct GLS) to $1.23\sigma_F$ ($2.27\times$ worse sensitivity, or a $55.8\%$ inverse-sensitivity loss) at $\lambda = 7.5\text{ nm}$ and $1.03\sigma_F$ ($1.90\times$ worse) at $\lambda = 10\text{ nm}$.
 \end{enumerate}
-Direct evaluation on un-interpolated coordinates using heteroscedastic GLS is therefore mandatory to preserve high-frequency experimental sensitivity.
-
-\section{First-Principles Surface Metrology via KPFM}
-A recurring hypothesis in the literature is that spatial electrostatic patch potentials might generate quasi-periodic force residuals. To resolve this question from first principles, we analyzed the raw Kelvin Probe Force Microscopy (KPFM) dataset from the recent superconducting optomechanical Casimir experiment of de Jong \textit{et al.}~\cite{dejong2025} ($512 \times 512$ pixels over $2\,\mu\mathrm{m} \times 2\,\mu\mathrm{m}$, $V_{\mathrm{rms}} = 42.42\,\mathrm{mV}$, topographic roughness $\delta_{\mathrm{rms}} = 2.22\,\mathrm{nm}$).
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=\columnwidth]{fig3_kpfm_monotonic.pdf}
-\caption{First-principles electrostatic patch pressure $P_{\mathrm{patch}}(d)$ calculated by integrating the 2D KPFM Hann-windowed spectrum $S_{VV}(\mathbf{k})$ of de Jong \textit{et al.}\ (2025) via the Speake-Trenner Laplace kernel Eq.~\eqref{eq:speake}. The resulting background follows a smooth, strictly monotonic power law $P_{\mathrm{patch}} \propto d^{-2.29}$ without periodic oscillatory components.}
-\label{fig:kpfm_monotonic}
+\includegraphics[width=\columnwidth]{fig_MDL_vs_noise.png}
+\caption{Monte Carlo injection-recovery benchmark on the non-uniform separation grid of Decca \textit{et al.}\ Fig.~3(b) ($\mathrm{CV}(\Delta z)=40.7\%$) at matched global $\mathrm{FAP}=0.01$. (a)~$90\%$ Minimum Detectable Level ($\mathrm{MDL}_{90}/\sigma_F$): direct GLS maintains uniform sensitivity ($0.54\sigma_F$), whereas cubic-spline interpolation + Hann FFT degrades sensitivity by up to $2.27\times$ ($1.23\sigma_F$) at short wavelengths. (b)~Signal variance retained after cubic-spline resampling ($77.4\%$ at $\lambda = 7.5\text{ nm}$, i.e.\ $22.6\%$ variance attenuation).}
+\label{fig:mdl}
 \end{figure}
 
-Computing the 2D Hann-windowed patch power spectral density $S_{VV}(\mathbf{k})$ and integrating through the exact Speake-Trenner Laplace kernel~\cite{speake2003}:
+\section{2025 KPFM Patch-Potential and Superconducting Audit}
+To verify from surface-physics first principles why realistic electrostatic patch potentials generate smooth inverse-power-law drifts rather than periodic oscillations, we analyzed the raw Olympus Jupiter AFM/KPFM dataset (\texttt{W1P3\_E4\_measarea3 0003.h5}, $2\,\mu\mathrm{m}\times 2\,\mu\mathrm{m}$, $512\times 512$ pixels) and Lifshitz BCS/Drude/Plasma curves from the superconducting Al drum Casimir experiment of de Jong \textit{et al.}~\cite{dejong2025} (Fig.~\ref{fig:kpfm}).
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=0.96\textwidth]{fig_kpfm_patch_audit.png}
+\caption{Surface metrology and Speake--Trenner electrostatic patch-pressure integration on raw KPFM and Lifshitz data from de Jong \textit{et al.}\ (2025)~\cite{dejong2025}. (a)~Line-median-flattened KPFM surface potential fluctuation map $\delta V(x,y)$ ($V_{\mathrm{rms}} = 42.42\text{ mV}$, topographic roughness $\delta_{\mathrm{rms}} = 2.22\text{ nm}$). (b)~Radially averaged 2D Hann-windowed patch PSD $S_{VV}(k)$. (c)~Integrated electrostatic patch pressure $P_{\mathrm{patch}}(d) \propto d^{-2.29}$ compared against the Lifshitz superconducting $|P_{\mathrm{BCS}}(d)|$, $|P_{\mathrm{Plasma}} - P_{\mathrm{BCS}}|$, and BCS condensation shift $|P_{\mathrm{BCS}} - P_{\mathrm{Drude}}|$.}
+\label{fig:kpfm}
+\end{figure*}
+
+After line-median flattening, the Al electrode exhibits an RMS patch potential $V_{\mathrm{rms}} = 42.42\text{ mV}$ and topographic roughness $\delta_{\mathrm{rms}} = 2.22\text{ nm}$. Computing the Parseval-normalized 2D Hann-windowed power spectral density $S_{VV}(\mathbf{k})$ and integrating the exact Speake--Trenner Laplace transfer kernel~\cite{speake2003}:
 \begin{equation}
-P_{\mathrm{patch}}(d) = \frac{\varepsilon_0}{2} \int_{\mathbb{R}^2} \frac{k^2}{\sinh^2(kd)} 2 S_{VV}(\mathbf{k}) \frac{d^2k}{(2\pi)^2},
+P_{\mathrm{patch}}(d) = \frac{\varepsilon_0}{2} \int_{\mathbb{R}^2} \frac{k^2}{\sinh^2(k d)}\, 2 S_{VV}(\mathbf{k}) \frac{d^2 k}{(2\pi)^2},
 \label{eq:speake}
 \end{equation}
-we find that the resulting electrostatic patch pressure obeys a smooth monotonic power-law profile (Fig.~\ref{fig:kpfm_monotonic}):
-\begin{equation}
-P_{\mathrm{patch}}(d) \propto d^{-2.29},
-\end{equation}
-with no oscillatory behavior whatsoever ($P_{\mathrm{patch}}(20\,\mathrm{nm}) = 21.74\,\mathrm{Pa}$, $P_{\mathrm{patch}}(50\,\mathrm{nm}) = 2.90\,\mathrm{Pa}$, and $P_{\mathrm{patch}}(100\,\mathrm{nm}) = 522.3\,\mathrm{mPa}$). Because the Laplace kernel $k^2/\sinh^2(kd) \sim 4k^2 e^{-2kd}$ acts as an exponential low-pass filter in separation $d$, disordered surface patches cannot generate periodic force modulations in experimental scans.
+yields a strictly monotonic, non-oscillatory pressure profile scaling effectively as $P_{\mathrm{patch}}(d) \propto d^{-2.29}$ across $d \in [10, 108]\text{ nm}$, with $P_{\mathrm{patch}}(20\text{ nm}) = 21.74\text{ Pa}$, $P_{\mathrm{patch}}(50\text{ nm}) = 2.90\text{ Pa}$, and $P_{\mathrm{patch}}(100\text{ nm}) = 522.3\text{ mPa}$. Because the Laplace kernel $k^2/\sinh^2(kd) \sim 4 k^2 e^{-2kd}$ acts as a monotonic exponential low-pass filter in separation distance $d$, spatial disorder in $V(x,y)$ is mapped into a smooth inverse-power-law force drift rather than a sinusoidal oscillation in $d$.
 
-\section{Conclusions}
-Our analysis demonstrates that apparent periodic anomalies in Casimir force residuals are readily fabricated by naive polynomial detrending and improper periodogram thresholding. By enforcing: (i) physical inverse-power detrending, (ii) direct heteroscedastic GLS analysis without spline resampling, and (iii) extreme-value Baluev statistics, spurious signals are completely eliminated, establishing rigorous and reproducible detection baselines for nanoscale precision force metrology.
+\section{Conclusion}
+By combining lossless vector data recovery from Decca \textit{et al.}\ (2003) with 2D KPFM patch-potential integration from de Jong \textit{et al.}\ (2025), we have resolved the statistical and detrending pitfalls that plague spectral searches in Casimir force residuals. When evaluated with physical inverse-power detrending---analytically absorbing first-order $\delta z_0$ contact-point drift---and the heteroscedastic Generalized Lomb--Scargle periodogram with Baluev extreme-value statistics, empirical Casimir residuals show zero evidence of periodic anomalies ($\mathrm{FAP} = 0.163\text{--}0.651$, $\mathrm{MDL}_{90} = 0.54\sigma_F \approx 0.12\text{ pN}$).
+
+\section*{Code and Data Availability}
+All vector extraction scripts, Baluev GLS routines, KPFM Speake--Trenner integration pipelines, and reproduction manifests are archived under Zenodo DOI \href{https://doi.org/10.5281/zenodo.24121687}{\texttt{10.5281/zenodo.24121687}} (\url{https://github.com/bruno-olivaes/casimir-afm-spectroscopy}).
 
 \begin{thebibliography}{99}
-\bibitem{casimir1948} H. B. G. Casimir, Proc. K. Ned. Akad. Wet. \textbf{51}, 793 (1948).
-\bibitem{lifshitz1956} E. M. Lifshitz, Sov. Phys. JETP \textbf{2}, 73 (1956).
-\bibitem{decca2003} R. S. Decca, D. L\'opez, E. Fischbach, and D. E. Krause, Phys. Rev. Lett. \textbf{91}, 050402 (2003).
-\bibitem{dejong2025} M. H. J. de Jong \textit{et al.}, Nat. Phys. (2025); Zenodo Dataset (2025).
-\bibitem{zechmeister2009} M. Zechmeister and M. K\"urster, Astron. Astrophys. \textbf{496}, 577 (2009).
-\bibitem{baluev2008} R. V. Baluev, Mon. Not. R. Astron. Soc. \textbf{385}, 1279 (2008).
-\bibitem{speake2003} C. C. Speake and C. Trenner, Class. Quantum Grav. \textbf{20}, S281 (2003).
+\bibitem{casimir1948} H. B. G. Casimir, \textit{Proc. K. Ned. Akad. Wet.} \textbf{51}, 793 (1948).
+\bibitem{lifshitz1956} E. M. Lifshitz, \textit{Sov. Phys. JETP} \textbf{2}, 73 (1956).
+\bibitem{decca2003} R. S. Decca, D. L\'opez, E. Fischbach, and D. E. Krause, \textit{Phys. Rev. Lett.} \textbf{91}, 050402 (2003).
+\bibitem{lamoreaux1997} S. K. Lamoreaux, \textit{Phys. Rev. Lett.} \textbf{78}, 5 (1997).
+\bibitem{bressi2002} G. Bressi, G. Carugno, R. Onofrio, and G. Ruoso, \textit{Phys. Rev. Lett.} \textbf{88}, 041804 (2002).
+\bibitem{klimchitskaya2009} G. L. Klimchitskaya, U. Mohideen, and V. M. Mostepanenko, \textit{Rev. Mod. Phys.} \textbf{81}, 1827 (2009).
+\bibitem{dejong2025} M. H. J. de Jong, E. Korkmazgil, L. Banniard, M. A. Sillanp\"a\"a, and L. Mercier de L\'epinay, \textit{Nat. Phys.} \textbf{21}, 1--8 (2025), \href{https://doi.org/10.1038/s41567-024-02728-6}{doi:10.1038/s41567-024-02728-6}.
+\bibitem{zechmeister2009} M. Zechmeister and M. K\"urster, \textit{Astron. Astrophys.} \textbf{496}, 577 (2009).
+\bibitem{baluev2008} R. V. Baluev, \textit{Mon. Not. R. Astron. Soc.} \textbf{385}, 1279 (2008).
+\bibitem{speake2003} C. C. Speake and C. Trenner, \textit{Class. Quantum Grav.} \textbf{20}, S281 (2003).
 \end{thebibliography}
 
 \end{document}
